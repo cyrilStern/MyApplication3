@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
         Matrix m = new Matrix();
         m.setRotate(25f);
         Bitmap btres = Bitmap.createBitmap(bitmapreturn,0,0,bitmapreturn.getWidth(),bitmapreturn.getHeight()/2,m,true);
+        LayoutAddHalfImageToView koi = new LayoutAddHalfImageToView(this);
+        koi.setThePath();
 
         canvasreturn.drawBitmap(bitmapreturn,550,550,null);
         ImageView iw = new ImageView(this);
@@ -66,4 +68,5 @@ public class MainActivity extends AppCompatActivity {
             return framelayout;
         }
     }
+
 }

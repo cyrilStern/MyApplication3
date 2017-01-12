@@ -1,5 +1,6 @@
 package com.example.root.myapplication;
 
+import android.app.IntentService;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +9,8 @@ import android.os.Message;
 import android.os.Messenger;
 import android.support.annotation.BoolRes;
 import android.support.annotation.Nullable;
+import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Created by cyrilstern1 on 11/01/2017.
@@ -20,16 +23,23 @@ public class ThreadServiceTimer extends Service {
     private Bundle extras;
 
     public ThreadServiceTimer() {
-        ticker = new Thread(new Ticker());
     }
-    public static void stopticker(){
-        ticker.interrupt();
-    }
+
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         extras = intent.getExtras();
         messager = (Messenger) extras.get("messager");
+        msg = Message.obtain();
+        Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
+
+        ticker = new Thread(new Ticker());
+        ticker.start();
+
+
+
+
         return START_STICKY;
     }
 
@@ -44,6 +54,9 @@ public class ThreadServiceTimer extends Service {
         return null;
     }
 
+
+
+
     private class Ticker implements Runnable {
         public void run() {
             while (!ticker.isInterrupted()) {
@@ -51,8 +64,9 @@ public class ThreadServiceTimer extends Service {
                     Thread.sleep(1000);
                     Bundle b = new Bundle();
                     b.putBoolean("add",true);
-                    msg.setData(b);
-                    messager.send(msg);
+                    Message msg1 = Message.obtain();
+                    msg1.setData(b);
+                    messager.send(msg1);
                 } catch (Exception e) {
                     return;
                 }

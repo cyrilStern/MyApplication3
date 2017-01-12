@@ -15,6 +15,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
+        <service
+            android:name="com.example.root.myapplication.ThreadServiceTimer"
+            android:enabled="true">
+    </service>
+
+</application>
 
 </manifest>

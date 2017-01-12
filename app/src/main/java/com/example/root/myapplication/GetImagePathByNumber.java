@@ -9,11 +9,11 @@ import android.support.v4.content.ContextCompat;
 
 public abstract class GetImagePathByNumber {
     Context c;
-    public GetImagePathByNumber(Context context) {
+    public  GetImagePathByNumber(Context context) {
         this.c = context;
     }
-    public   int getPath(int integer){
-        int drawableResourceId = c.getResources().getIdentifier("board_letters"+integer, "drawable", c.getPackageName());
+    public  static int getPath(int integer,Context context){
+        int drawableResourceId = context.getResources().getIdentifier("board_letters"+integer, "drawable", context.getPackageName());
         return drawableResourceId;
     }
 }

@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         fl5 = (FrameLayout) findViewById(R.id.seconde);
         firstlaunch = true;
         bar = getSupportActionBar();
-        bar.hide();
+        //bar.hide();
         Canvas canvasreturn = new Canvas();
         Matrix m = new Matrix();
         m.setRotate(25f);
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         //koi.setThePath();
         //canvasreturn.drawBitmap(bitmapreturn,550,550,null);
         linearLayout = new LinearLayout(this);
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        //linearLayout.setOrientation(LinearLayout.VERTICAL);
         FrameLayout.LayoutParams layoutParams= new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.gravity = Gravity.BOTTOM;
         splitBit = new SplitBitmatInTwo();

@@ -32,8 +32,6 @@ public class ThreadServiceTimer extends Service {
         extras = intent.getExtras();
         messager = (Messenger) extras.get("messager");
         msg = Message.obtain();
-        Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
-
         ticker = new Thread(new Ticker());
         ticker.start();
 

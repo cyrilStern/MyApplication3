@@ -37,10 +37,12 @@ public class FlipNumber extends ImageView {
     private boolean mInFrontShowing = true;
     private boolean mIsHorizontakkyFlipped = false;
     private BitmapDrawable mCurrentBitmapDrawable;
+    private int position;
 
-    public FlipNumber(Context context) {
+    public FlipNumber(Context context, int position) {
         super(context);
         initCtx(context);
+        this.position = position;
     }
     public FlipNumber(Context context, AttributeSet attributeSet) {
         super(context);
@@ -48,8 +50,7 @@ public class FlipNumber extends ImageView {
     }
 
     private void initCtx(Context context){
-        mFrontBitmapDrawable = new BitmapDrawable(getResources(),BitmapFactory.decodeResource(getResources(),R.drawable.onetop));
-        mBackBitmaDrawable  =  new BitmapDrawable(getResources(),BitmapFactory.decodeResource(getResources(),R.drawable.onebotton));
+
         horizontFlipmatrix = new Matrix();
         setPivotY(mFrontBitmapDrawable.getBitmap().getHeight());
         Log.i("thisis the height", String.valueOf((mFrontBitmapDrawable.getBitmap().getHeight())));
@@ -63,9 +64,45 @@ public class FlipNumber extends ImageView {
         return new BitmapDrawable(getResources(),bitmapDrawablewithBorder);
 
     }
+
+    public void activActionPositonFlip(int nbrtim) {
+        switch (position) {
+            case 0:
+                position = 1;
+                int[] arrayfromdraw = GetImagePathByNumber.getPath(nbrtim + 1, getContext());
+                mFrontBitmapDrawable = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), arrayfromdraw[0]));
+                mBackBitmaDrawable = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), arrayfromdraw[1]));
+                break;
+            case 1:
+                flipToBotton(1, 1);
+                break;
+            case 2:
+                flipToBotton(1, 1);
+                break;
+        }
+    }
     public void flipToBotton(int numberPile, int velocity){
         flipVertical(numberPile,false,velocity);
     }
+
+    public int getPositonLayer() {
+        return this.position;
+    }
+
+    private void positionUpdate() {
+        switch (position) {
+            case 0:
+                position = 1;
+                break;
+            case 1:
+                position = 2;
+                break;
+            case 2:
+                position = 0;
+                break;
+        }
+    }
+
 
     public void flipVertical (int numbertI, boolean clockwise, int velocity){
         PropertyValuesHolder rotation = PropertyValuesHolder.ofFloat(View.ROTATION_X,clockwise ? 180 : -180);
@@ -137,7 +174,9 @@ public class FlipNumber extends ImageView {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        horizontFlipmatrix.setScale(1, -1, w/2,h/2);
+        if (position == 1) horizontFlipmatrix.setScale(1, -1, w / 2, h / 2);
+        if (position == 0) horizontFlipmatrix.setScale(-1, 1, w / 2, h / 2);
+
     }
 
     @Override

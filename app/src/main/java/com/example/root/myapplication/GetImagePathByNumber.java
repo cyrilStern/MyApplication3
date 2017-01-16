@@ -12,8 +12,11 @@ public abstract class GetImagePathByNumber {
     public  GetImagePathByNumber(Context context) {
         this.c = context;
     }
-    public  static int getPath(int integer,Context context){
-        int drawableResourceId = context.getResources().getIdentifier("board_letters"+integer, "drawable", context.getPackageName());
-        return drawableResourceId;
+
+    public static int[] getPath(int integer, Context context) {
+        int drawableResourceIdtop = context.getResources().getIdentifier("top" + integer, "drawable", context.getPackageName());
+        int drawableResourceIdbottom = context.getResources().getIdentifier("bottom" + integer, "drawable", context.getPackageName());
+        int[] draw = {drawableResourceIdtop, drawableResourceIdbottom};
+        return draw;
     }
 }

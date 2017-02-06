@@ -13,10 +13,13 @@ public abstract class GetImagePathByNumber {
         this.c = context;
     }
 
-    public static int[] getPath(int integer, Context context) {
-        int drawableResourceIdtop = context.getResources().getIdentifier("top" + integer, "drawable", context.getPackageName());
-        int drawableResourceIdbottom = context.getResources().getIdentifier("bottom" + integer, "drawable", context.getPackageName());
-        int[] draw = {drawableResourceIdtop, drawableResourceIdbottom};
-        return draw;
+    public static int getPath(int integer, String position, Context context) {
+        int drawableResourceId;
+        if (position.matches("top")) {
+            drawableResourceId = context.getResources().getIdentifier("top" + integer, "drawable", context.getPackageName());
+        } else {
+            drawableResourceId = context.getResources().getIdentifier("botton" + integer, "drawable", context.getPackageName());
+        }
+        return drawableResourceId;
     }
 }

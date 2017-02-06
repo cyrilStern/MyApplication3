@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.SystemClock;
 import android.support.annotation.BoolRes;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -32,12 +33,11 @@ public class ThreadServiceTimer extends Service {
         extras = intent.getExtras();
         messager = (Messenger) extras.get("messager");
         msg = Message.obtain();
+        Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
+        if (ticker == null) {
         ticker = new Thread(new Ticker());
         ticker.start();
-
-
-
-
+        }
         return START_STICKY;
     }
 
@@ -53,20 +53,18 @@ public class ThreadServiceTimer extends Service {
     }
 
 
+    private class Ticker extends Thread {
 
-
-    private class Ticker implements Runnable {
         public void run() {
             while (!ticker.isInterrupted()) {
                 try {
-                    Thread.sleep(1000);
+                    SystemClock.sleep(1000);
                     Bundle b = new Bundle();
                     b.putBoolean("add",true);
                     Message msg1 = Message.obtain();
                     msg1.setData(b);
                     messager.send(msg1);
                 } catch (Exception e) {
-                    return;
                 }
             }
 

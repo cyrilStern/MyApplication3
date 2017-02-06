@@ -5,7 +5,7 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/backgroundalarmclock"
+    android:background="@drawable/backgroundalarmclock1"
     tools:context="com.example.root.myapplication.MainActivity">
 
     <FrameLayout
@@ -41,6 +41,7 @@
             android:background="@android:color/transparent">
 
         </FrameLayout>
+
         <FrameLayout
             android:id="@+id/hour"
             android:layout_width="match_parent"
@@ -48,30 +49,20 @@
             android:layout_weight="1">
 
         </FrameLayout>
+
         <FrameLayout
             android:id="@+id/separator"
             android:layout_width="20dp"
             android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_margin="0dp"
-                android:layout_marginTop="0dp"
-                android:gravity="center"
-                android:text=":"
-                android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Menu"
-                android:textColor="@android:color/white"
-                android:textSize="100sp" />
         </FrameLayout>
+
         <FrameLayout
             android:id="@+id/diminute"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1">
-        </FrameLayout>
+            android:layout_weight="1"></FrameLayout>
+
         <FrameLayout
             android:id="@+id/minute"
             android:layout_width="match_parent"
@@ -80,7 +71,8 @@
 
         </FrameLayout>
     </LinearLayout>
-    <LinearLayout
+
+        <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"

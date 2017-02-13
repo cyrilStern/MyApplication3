@@ -38,6 +38,7 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
+    private static final String START_STRING = "START";
     private final int bigsize = 40;
     private final int littlesize = 0;
     public Bitmap mybitmap,newbmp,bitmap,bmp;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imageview;
     private ActionBar bar;
     private int i, j, h, constM, constSD, constDM, constH, constDH;
+    private String savediseconde, savediminute, savehour, savediminu, savehou;
     private SplitBitmatInTwo splitBit;
     private FrameLayout frameret;
     private FlipNumber FlipNumberS1, FlipNumberS2, FlipNumberS4, FlipNumberS3, FlipNumberSD1, FlipNumberSD2, FlipNumberSD3, FlipNumberSD4;
@@ -64,6 +66,13 @@ public class MainActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_main);
+        savediseconde = START_STRING;
+        savediminute = START_STRING;
+        savehour = START_STRING;
+        savediminu = START_STRING;
+        savehou = START_STRING;
+
+
         fl = (FrameLayout) findViewById(R.id.seconde);
         FlipNumberS1 = new FlipNumber(this, 0);
         FlipNumberS4 = new FlipNumber(this, 0);
@@ -122,16 +131,15 @@ public class MainActivity extends AppCompatActivity {
         fl5.addView(FlipNumberHD2);
         fl5.addView(FlipNumberHD3);
         fl5.addView(FlipNumberHD4);
-        init();
 
 
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void init() {
-        for (int i = 0; i < 5; i++) {
-            String second, disecond, minute, diminute, hour, dihour;
+        for (int i = 0; i < 4; i++) {
 
+            String second, disecond, minute, diminute, hour, dihour;
             Integer secondint = new Date().getSeconds();
             Integer minuteint = new Date().getMinutes();
             Integer hourint = new Date().getHours();
@@ -149,16 +157,15 @@ public class MainActivity extends AppCompatActivity {
                 disecond = "0";
             } else disecond = String.valueOf(secondint.toString().charAt(1));
 
-
             this.FlipNumberS1.activActionPositonFlip(Integer.valueOf(second));
-            if (i > 0) FlipNumberS2.activActionPositonFlip(Integer.valueOf(second));
-            if (i > 1) FlipNumberS3.activActionPositonFlip(Integer.valueOf(second));
-            if (i > 2) FlipNumberS4.activActionPositonFlip(Integer.valueOf(second));
+            if (i > 0) this.FlipNumberS2.activActionPositonFlip(Integer.valueOf(second));
+            if (i > 1) this.FlipNumberS3.activActionPositonFlip(Integer.valueOf(second));
+            if (i > 2) this.FlipNumberS4.activActionPositonFlip(Integer.valueOf(second));
 
-            this.FlipNumberSD1.activActionPositonFlip(Integer.valueOf(disecond));
-            if (i > 0) FlipNumberSD2.activActionPositonFlip(Integer.valueOf(disecond));
-            if (i > 1) FlipNumberSD3.activActionPositonFlip(Integer.valueOf(disecond));
-            if (i > 2) FlipNumberSD4.activActionPositonFlip(Integer.valueOf(disecond));
+            this.FlipNumberSD1.activActionPositonFlip(Integer.valueOf(second));
+            if (i > 0) this.FlipNumberSD2.activActionPositonFlip(Integer.valueOf(second));
+            if (i > 1) this.FlipNumberSD3.activActionPositonFlip(Integer.valueOf(second));
+            if (i > 2) this.FlipNumberSD4.activActionPositonFlip(Integer.valueOf(second));
 
             this.FlipNumberM1.activActionPositonFlip(Integer.valueOf(minute));
             if (i > 0) FlipNumberM2.activActionPositonFlip(Integer.valueOf(minute));
@@ -188,6 +195,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        init();
+
         String second, disecond, minute, diminute, hour, dihour;
         Integer secondint = new Date().getSeconds();
         Integer minuteint = new Date().getMinutes();
@@ -208,31 +217,17 @@ public class MainActivity extends AppCompatActivity {
 
         handler = new Handler(){
             boolean zeroToNine = true;
-
-
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 Bundle bundle = msg.getData();
                 if (bundle.getBoolean("add") == true) {
+
                     String second, disecond, minute, diminute, hour, dihour;
                     Integer secondint = new Date().getSeconds();
                     Integer minuteint = new Date().getMinutes();
                     Integer hourint = new Date().getHours();
-                    second = String.valueOf(secondint.toString().charAt(0));
-                    minute = String.valueOf(minuteint.toString().charAt(0));
-                    hour = String.valueOf(hourint.toString().charAt(0));
-
-                    if (hourint.toString().length() < 2) {
-                        dihour = "0";
-                    } else dihour = String.valueOf(hourint.toString().charAt(1));
-                    if (minuteint.toString().length() < 2) {
-                        diminute = "0";
-                    } else diminute = String.valueOf(minuteint.toString().charAt(1));
-                    if (secondint.toString().length() < 2) {
-                        disecond = "0";
-                    } else disecond = String.valueOf(secondint.toString().charAt(1));
                     if (secondint >= 0 && secondint <= 9) {
                         second = String.valueOf(secondint.toString().charAt(0));
                         disecond = "0";
@@ -240,90 +235,99 @@ public class MainActivity extends AppCompatActivity {
                         FlipNumberS2.activActionPositonFlip(Integer.valueOf(second));
                         FlipNumberS3.activActionPositonFlip(Integer.valueOf(second));
                         FlipNumberS4.activActionPositonFlip(Integer.valueOf(second));
-
-
-                    }else{
-
-                        FlipNumberS1.activActionPositonFlip(Integer.valueOf(disecond));
-                        FlipNumberS2.activActionPositonFlip(Integer.valueOf(disecond));
-                        FlipNumberS3.activActionPositonFlip(Integer.valueOf(disecond));
-                        FlipNumberS4.activActionPositonFlip(Integer.valueOf(disecond));
-
-
-                        if ("" == "1") {
+                        if (!savediseconde.equals(disecond)) {
                             FlipNumberSD1.activActionPositonFlip(Integer.valueOf(disecond));
-                            if (j > 0)
-                                FlipNumberSD2.activActionPositonFlip(Integer.valueOf(disecond));
-                            if (j > 1)
-                                FlipNumberSD3.activActionPositonFlip(Integer.valueOf(disecond));
-                            if (j > 2)
-                                FlipNumberSD4.activActionPositonFlip(Integer.valueOf(disecond));
-                            //disecondtest = Integer.valueOf(disecond);
+                            FlipNumberSD2.activActionPositonFlip(Integer.valueOf(disecond));
+                            FlipNumberSD3.activActionPositonFlip(Integer.valueOf(disecond));
+                            FlipNumberSD4.activActionPositonFlip(Integer.valueOf(disecond));
+                            savediseconde = disecond;
                         }
+                    }else{
+                        second = String.valueOf(secondint.toString().charAt(1));
+                        disecond = String.valueOf(secondint.toString().charAt(0));
+                        FlipNumberS1.activActionPositonFlip(Integer.valueOf(second));
+                        FlipNumberS2.activActionPositonFlip(Integer.valueOf(second));
+                        FlipNumberS3.activActionPositonFlip(Integer.valueOf(second));
+                        FlipNumberS4.activActionPositonFlip(Integer.valueOf(second));
+                        if (!savediseconde.equals(disecond)) {
+                            FlipNumberSD1.activActionPositonFlip(Integer.valueOf(disecond));
+                            FlipNumberSD2.activActionPositonFlip(Integer.valueOf(disecond));
+                            FlipNumberSD3.activActionPositonFlip(Integer.valueOf(disecond));
+                            FlipNumberSD4.activActionPositonFlip(Integer.valueOf(disecond));
+                            savediseconde = disecond;
+                        }
+                    }
+                    if (minuteint >= 0 && minuteint <= 9) {
+                        minute = String.valueOf(minuteint.toString().charAt(0));
+                        diminute = "0";
+                        if (!savediminu.equals(minute)) {
+                            FlipNumberM1.activActionPositonFlip(Integer.valueOf(minute));
+                            FlipNumberM2.activActionPositonFlip(Integer.valueOf(minute));
+                            FlipNumberM3.activActionPositonFlip(Integer.valueOf(minute));
+                            FlipNumberM4.activActionPositonFlip(Integer.valueOf(minute));
+                            savediminu = minute;
 
+                        }
+                        if (!savediminute.equals(diminute)) {
+                            FlipNumberMD1.activActionPositonFlip(Integer.valueOf(diminute));
+                            FlipNumberMD2.activActionPositonFlip(Integer.valueOf(diminute));
+                            FlipNumberMD3.activActionPositonFlip(Integer.valueOf(diminute));
+                            FlipNumberMD4.activActionPositonFlip(Integer.valueOf(diminute));
+                            savediminute = diminute;
+                        }
+                    } else {
+                        minute = String.valueOf(minuteint.toString().charAt(1));
+                        diminute = String.valueOf(minuteint.toString().charAt(0));
+                        if (!savediminu.equals(minute)) {
+                            FlipNumberM1.activActionPositonFlip(Integer.valueOf(minute));
+                            FlipNumberM2.activActionPositonFlip(Integer.valueOf(minute));
+                            FlipNumberM3.activActionPositonFlip(Integer.valueOf(minute));
+                            FlipNumberM4.activActionPositonFlip(Integer.valueOf(minute));
+                            savediminu = minute;
+                        }
+                        if (!savediminute.equals(diminute)) {
+                            FlipNumberMD1.activActionPositonFlip(Integer.valueOf(diminute));
+                            FlipNumberMD2.activActionPositonFlip(Integer.valueOf(diminute));
+                            FlipNumberMD3.activActionPositonFlip(Integer.valueOf(diminute));
+                            FlipNumberMD4.activActionPositonFlip(Integer.valueOf(diminute));
+                            savediminute = diminute;
+                        }
                     }
-                    if (secondint == 0 || firstlaunch) {
-//                        if(minuteint >=0 && minuteint <=9){
-//                            minute = String.valueOf(minuteint.toString().charAt(0));
-//                            diminute = "0";
-//                            FlipNumberM1.activActionPositonFlip(Integer.valueOf(minute));
-//                            if(h>0)FlipNumberM2.activActionPositonFlip(Integer.valueOf(minute));
-//                            if(h>1)FlipNumberM3.activActionPositonFlip(Integer.valueOf(minute));
-//                            if(h>2)FlipNumberM4.activActionPositonFlip(Integer.valueOf(minute));
-//                            if(h<3)h++;
-//
-//
-//                        }else{
-//                            minute = String.valueOf(minuteint.toString().charAt(1));
-//                            diminute = String.valueOf(minuteint.toString().charAt(0));
-//                            FlipNumberM1.activActionPositonFlip(Integer.valueOf(minute));
-//                            if(i>0)FlipNumberM2.activActionPositonFlip(Integer.valueOf(minute));
-//                            if(i>1)FlipNumberM3.activActionPositonFlip(Integer.valueOf(minute));
-//                            if(i>2)FlipNumberM4.activActionPositonFlip(Integer.valueOf(minute));
-//                            if(i<3)i++;
-//
-//                            FlipNumberMD1.activActionPositonFlip(Integer.valueOf(diminute));
-//                            if(i>0)FlipNumberMD2.activActionPositonFlip(Integer.valueOf(diminute));
-//                            if(i>1)FlipNumberMD3.activActionPositonFlip(Integer.valueOf(diminute));
-//                            if(i>2)FlipNumberMD4.activActionPositonFlip(Integer.valueOf(diminute));
-//                            if(i<3)i++;
-//
-//
-//                        }
+                    if (hourint >= 0 && hourint <= 9) {
+                        hour = String.valueOf(hourint.toString().charAt(0));
+                        dihour = "0";
+                        if (!savehou.equals(hour)) {
+                            FlipNumberH1.activActionPositonFlip(Integer.valueOf(hour));
+                            FlipNumberH2.activActionPositonFlip(Integer.valueOf(hour));
+                            FlipNumberH3.activActionPositonFlip(Integer.valueOf(hour));
+                            FlipNumberH4.activActionPositonFlip(Integer.valueOf(hour));
+                            savehou = hour;
+                        }
+                        if (!savehour.equals(dihour)) {
+                            FlipNumberHD1.activActionPositonFlip(Integer.valueOf(dihour));
+                            FlipNumberHD2.activActionPositonFlip(Integer.valueOf(dihour));
+                            FlipNumberHD3.activActionPositonFlip(Integer.valueOf(dihour));
+                            FlipNumberHD4.activActionPositonFlip(Integer.valueOf(dihour));
+                            savehour = dihour;
+                        }
+                    } else {
+                        hour = String.valueOf(hourint.toString().charAt(1));
+                        dihour = String.valueOf(hourint.toString().charAt(0));
+                        if (!savehou.equals(hour)) {
+                            FlipNumberH1.activActionPositonFlip(Integer.valueOf(hour));
+                            FlipNumberH2.activActionPositonFlip(Integer.valueOf(hour));
+                            FlipNumberH3.activActionPositonFlip(Integer.valueOf(hour));
+                            FlipNumberH4.activActionPositonFlip(Integer.valueOf(hour));
+                            savehou = hour;
+                        }
+                        if (!savehour.equals(dihour)) {
+                            FlipNumberHD1.activActionPositonFlip(Integer.valueOf(dihour));
+                            FlipNumberHD2.activActionPositonFlip(Integer.valueOf(dihour));
+                            FlipNumberHD3.activActionPositonFlip(Integer.valueOf(dihour));
+                            FlipNumberHD4.activActionPositonFlip(Integer.valueOf(dihour));
+                            savehour = dihour;
+                        }
                     }
-                    if (minuteint == 0 || firstlaunch) {
-//                        if(hourint >=0 && hourint <=9){
-//                            hour = String.valueOf(hourint.toString().charAt(0));
-//                            dihour = "0";
-//                            FlipNumberH1.activActionPositonFlip(Integer.valueOf(hour));
-//                            if(i>0)FlipNumberH2.activActionPositonFlip(Integer.valueOf(hour));
-//                            if(i>1)FlipNumberH3.activActionPositonFlip(Integer.valueOf(hour));
-//                            if(i>2)FlipNumberH4.activActionPositonFlip(Integer.valueOf(hour));
-//                            if(i<3)i++;
-//
-//                            FlipNumberHD1.activActionPositonFlip(Integer.valueOf(dihour));
-//                            if(i>0)FlipNumberHD2.activActionPositonFlip(Integer.valueOf(dihour));
-//                            if(i>1)FlipNumberHD3.activActionPositonFlip(Integer.valueOf(dihour));
-//                            if(i>2)FlipNumberHD4.activActionPositonFlip(Integer.valueOf(dihour));
-//                            if(i<3)i++;
-//                         }else{
-//                            hour = String.valueOf(hourint.toString().charAt(1));
-//                            dihour = String.valueOf(hourint.toString().charAt(0));
-//                            FlipNumberH1.activActionPositonFlip(Integer.valueOf(hour));
-//                            if(i>0)FlipNumberH2.activActionPositonFlip(Integer.valueOf(hour));
-//                            if(i>1)FlipNumberH3.activActionPositonFlip(Integer.valueOf(hour));
-//                            if(i>2)FlipNumberH4.activActionPositonFlip(Integer.valueOf(hour));
-//                            if(i<3)i++;
-//
-//                            FlipNumberHD1.activActionPositonFlip(Integer.valueOf(dihour));
-//                            if(i>0)FlipNumberHD2.activActionPositonFlip(Integer.valueOf(dihour));
-//                            if(i>1)FlipNumberHD3.activActionPositonFlip(Integer.valueOf(dihour));
-//                            if(i>2)FlipNumberHD4.activActionPositonFlip(Integer.valueOf(dihour));
-//                            if(i<3)i++;
-//                           }
-                    }
-                    firstlaunch = false;
-
                 }
 
 

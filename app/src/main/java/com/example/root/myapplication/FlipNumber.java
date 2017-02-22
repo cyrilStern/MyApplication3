@@ -18,10 +18,13 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
+import java.lang.reflect.Array;
 
 /**
  * Created by cyrilstern1 on 14/01/2017.
@@ -37,7 +40,6 @@ public class FlipNumber extends ImageView {
     private final int MAX_FLIP_DURATION = 400;
     private final int ANTIALIAS_BORDER = 1;
     private int number = 0;
-    private FrameLayout frameLayout;
     private Matrix horizontFlipmatrix;
     private BitmapDrawable mFrontBitmapDrawable;
     private boolean mInFrontShowing = true;
@@ -46,6 +48,7 @@ public class FlipNumber extends ImageView {
     private int position;
     private int size = 0;
     private boolean onlyone;
+    private String TAG = "testlongueur";
 
 
     public FlipNumber(Context context, int position) {
@@ -62,6 +65,7 @@ public class FlipNumber extends ImageView {
     }
     public FlipNumber(Context context, AttributeSet attributeSet) {
         super(context);
+
         initCtx(context);
     }
 
@@ -69,9 +73,12 @@ public class FlipNumber extends ImageView {
         int getressource0 = GetImagePathByNumber.getPath(number, FlipNumber.LAYOUT_VIEW_POSITION_TOP, getContext());
         mFrontBitmapDrawable = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), getressource0));
         horizontFlipmatrix = new Matrix();
-        setPivotY(mFrontBitmapDrawable.getBitmap().getHeight() + 10);
-        setCameraDistance(CAMERA_DISTANCE);
         updateDrawableBitmap();
+        this.setLayoutParams((new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT)));
+        this.setPivotY(100);
+        //setCameraDistance(CAMERA_DISTANCE);
     }
 
     private BitmapDrawable bitmapDrawablewithBorder(BitmapDrawable bitmapDrawable){
@@ -90,7 +97,7 @@ public class FlipNumber extends ImageView {
         }
         Bitmap src = d.getBitmap();
         Bitmap dst = Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), m, false);
-        dst.setDensity(DisplayMetrics.DENSITY_DEFAULT);
+        //dst.setDensity(DisplayMetrics.DENSITY_DEVICE_STABLE);
         return new BitmapDrawable(this.getResources(), dst);
     }
 
@@ -99,7 +106,7 @@ public class FlipNumber extends ImageView {
         this.number = timeNumber;
         switch (position) {
             case 0:
-                this.setZ(3f);
+                this.setZ(4f);
                 int getressource0 = GetImagePathByNumber.getPath(number, FlipNumber.LAYOUT_VIEW_POSITION_TOP, getContext());
                 mFrontBitmapDrawable = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), getressource0));
                 updateDrawableBitmap();
@@ -137,9 +144,9 @@ public class FlipNumber extends ImageView {
         PropertyValuesHolder xOffset = PropertyValuesHolder.ofFloat(View.TRANSLATION_X, 0f);
         PropertyValuesHolder yOffset;
         if (clockwise) {
-            yOffset = PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, size != 0 ? size : 1f);
+            yOffset = PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, size != 0 ? size : 0f);
         } else {
-            yOffset = PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, -1f);
+            yOffset = PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, -0f);
         }
 
         ObjectAnimator timeAnimator = ObjectAnimator.ofPropertyValuesHolder(this,rotation,xOffset,yOffset);
@@ -156,6 +163,7 @@ public class FlipNumber extends ImageView {
                         int getressource2 = GetImagePathByNumber.getPath(number, FlipNumber.LAYOUT_VIEW_POSITION_BOTTOM, getContext());
                         mFrontBitmapDrawable = flip(new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), getressource2)), true);
                         updateDrawableBitmap();
+
                         onlyone = false;
                     }
                     if (position == 0) {
@@ -190,7 +198,7 @@ public class FlipNumber extends ImageView {
 
             @Override
             public void onAnimationEnd(Animator animator) {
-                updateDrawableBitmap();
+                // updateDrawableBitmap();
             }
 
             @Override
@@ -205,30 +213,17 @@ public class FlipNumber extends ImageView {
         });
         set.start();
 
-
     }
-    public void toggleFrontShowing(){
-        mInFrontShowing = !mInFrontShowing;
-    }
-    public void toggleIsHorizontalFlipped(){
-
-        mIsHorizontakkyFlipped = !mIsHorizontakkyFlipped;
-    }
-
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+
         //if (position == 2 || position == 3) horizontFlipmatrix.setScale(-1, -1, w / 2, h / 2);
 
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        canvas.concat(horizontFlipmatrix);
-        super.onDraw(canvas);
-    }
     public void updateDrawableBitmap(){
-        setImageDrawable(mFrontBitmapDrawable);
+        this.setImageDrawable(mFrontBitmapDrawable);
     }
 
 

@@ -1,6 +1,8 @@
 package com.example.root.myapplication;
 
 import android.animation.ValueAnimator;
+import android.app.DialogFragment;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -27,12 +29,15 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -57,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private FlipNumber FlipNumberS1, FlipNumberS2, FlipNumberS4, FlipNumberS3, FlipNumberSD1, FlipNumberSD2, FlipNumberSD3, FlipNumberSD4;
     private FlipNumber FlipNumberM1, FlipNumberM2, FlipNumberM3, FlipNumberM4, FlipNumberMD1, FlipNumberMD2, FlipNumberMD3, FlipNumberMD4;
     private FlipNumber FlipNumberH1, FlipNumberH2, FlipNumberH3, FlipNumberH4, FlipNumberHD1, FlipNumberHD2, FlipNumberHD3, FlipNumberHD4;
-
+    private Button btalrm;
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_main);
+        btalrm = (Button) findViewById(R.id.alarmButton);
         savediseconde = START_STRING;
         savediminute = START_STRING;
         savehour = START_STRING;
@@ -74,20 +80,20 @@ public class MainActivity extends AppCompatActivity {
 
 
         fl = (FrameLayout) findViewById(R.id.seconde);
-        FlipNumberS1 = new FlipNumber(this, 0);
-        FlipNumberS4 = new FlipNumber(this, 0);
-        FlipNumberS2 = new FlipNumber(this, 0);
-        FlipNumberS3 = new FlipNumber(this, 0);
+        FlipNumberS1 = new FlipNumber(this, 0, -10);
+        FlipNumberS4 = new FlipNumber(this, 0, -10);
+        FlipNumberS2 = new FlipNumber(this, 0, -10);
+        FlipNumberS3 = new FlipNumber(this, 0, -10);
         fl.addView(FlipNumberS4);
         fl.addView(FlipNumberS3);
         fl.addView(FlipNumberS2);
         fl.addView(FlipNumberS1);
 
         fl1 = (FrameLayout) findViewById(R.id.diseconde);
-        FlipNumberSD1 = new FlipNumber(this, 0);
-        FlipNumberSD4 = new FlipNumber(this, 0);
-        FlipNumberSD2 = new FlipNumber(this, 0);
-        FlipNumberSD3 = new FlipNumber(this, 0);
+        FlipNumberSD1 = new FlipNumber(this, 0, -10);
+        FlipNumberSD4 = new FlipNumber(this, 0, -10);
+        FlipNumberSD2 = new FlipNumber(this, 0, -10);
+        FlipNumberSD3 = new FlipNumber(this, 0, -10);
         fl1.addView(FlipNumberSD1);
         fl1.addView(FlipNumberSD2);
         fl1.addView(FlipNumberSD3);
@@ -188,10 +194,22 @@ public class MainActivity extends AppCompatActivity {
             if (i > 2) FlipNumberHD4.activActionPositonFlip(Integer.valueOf(dihour));
 
         }
-
+        btalrm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                DialogFragment df = new DialogueAlarm(this, new TimePickerDialog.OnTimeSetListener() {
+//                    @Override
+//                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+//
+//                    }
+//                });
+//                df.show(getFragmentManager(), "dialog");
+            }
+        });
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onResume() {
         super.onResume();

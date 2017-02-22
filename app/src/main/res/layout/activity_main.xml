@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/backgroundalarmclock1"
     tools:context="com.example.root.myapplication.MainActivity">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -23,6 +24,12 @@
             layout="@layout/fliplayoutclocknumber"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <include
+            layout="@layout/affichageradio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1" />
 
         <include

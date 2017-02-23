@@ -22,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -40,6 +41,7 @@ import android.widget.Toast;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.zip.Inflater;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -80,20 +82,20 @@ public class MainActivity extends AppCompatActivity {
 
 
         fl = (FrameLayout) findViewById(R.id.seconde);
-        FlipNumberS1 = new FlipNumber(this, 0, -10);
-        FlipNumberS4 = new FlipNumber(this, 0, -10);
-        FlipNumberS2 = new FlipNumber(this, 0, -10);
-        FlipNumberS3 = new FlipNumber(this, 0, -10);
+        FlipNumberS1 = new FlipNumber(this, 0, -40);
+        FlipNumberS4 = new FlipNumber(this, 0, -40);
+        FlipNumberS2 = new FlipNumber(this, 0, -40);
+        FlipNumberS3 = new FlipNumber(this, 0, -40);
         fl.addView(FlipNumberS4);
         fl.addView(FlipNumberS3);
         fl.addView(FlipNumberS2);
         fl.addView(FlipNumberS1);
 
         fl1 = (FrameLayout) findViewById(R.id.diseconde);
-        FlipNumberSD1 = new FlipNumber(this, 0, -10);
-        FlipNumberSD4 = new FlipNumber(this, 0, -10);
-        FlipNumberSD2 = new FlipNumber(this, 0, -10);
-        FlipNumberSD3 = new FlipNumber(this, 0, -10);
+        FlipNumberSD1 = new FlipNumber(this, 0, -40);
+        FlipNumberSD4 = new FlipNumber(this, 0, -40);
+        FlipNumberSD2 = new FlipNumber(this, 0, -40);
+        FlipNumberSD3 = new FlipNumber(this, 0, -40);
         fl1.addView(FlipNumberSD1);
         fl1.addView(FlipNumberSD2);
         fl1.addView(FlipNumberSD3);
@@ -214,7 +216,31 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         init();
+        View cursorRadio = findViewById(R.id.testdisplay);
+        cursorRadio.setOnTouchListener(new View.OnTouchListener() {
+                                           @Override
+                                           public boolean onTouch(View v, MotionEvent event) {
+                                               int x = (int) event.getX();
+                                               int y = (int) event.getY();
 
+                                               switch (event.getAction()) {
+                                                   case MotionEvent.ACTION_DOWN:
+                                                       Log.i("TAG", "touched down");
+                                                       break;
+                                                   case MotionEvent.ACTION_MOVE:
+                                                       Log.i("TAG", "moving: (" + x + ", " + y + ")");
+                                                       v.setTranslationX(event.getX());
+                                                       break;
+                                                   case MotionEvent.ACTION_UP:
+                                                       Log.i("TAG", "touched up");
+                                                       break;
+                                               }
+
+                                               return true;
+                                           }
+
+                                       }
+        );
         String second, disecond, minute, diminute, hour, dihour;
         Integer secondint = new Date().getSeconds();
         Integer minuteint = new Date().getMinutes();

@@ -3,18 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="71dp"
         android:background="@drawable/testdisplay">
 
-        <RelativeLayout
-            android:layout_width="14dp"
+        <FrameLayout
+            android:id="@+id/testdisplay"
+            android:layout_width="30dp"
             android:layout_height="match_parent"
-            android:layout_marginLeft="100dp"
-            tools:background="@color/colorAccent">
-
-        </RelativeLayout>
+            android:layout_marginLeft="300dp"
+            tools:background="@color/colorAccent"></FrameLayout>
     </FrameLayout>
 </RelativeLayout>

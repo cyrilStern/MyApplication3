@@ -77,7 +77,7 @@ public class FlipNumber extends ImageView {
         this.setLayoutParams((new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT)));
-        this.setPivotY(100);
+        this.setPivotY(200);
         //setCameraDistance(CAMERA_DISTANCE);
     }
 

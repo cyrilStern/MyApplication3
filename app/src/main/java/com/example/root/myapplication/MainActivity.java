@@ -199,13 +199,7 @@ public class MainActivity extends AppCompatActivity {
         btalrm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                DialogFragment df = new DialogueAlarm(this, new TimePickerDialog.OnTimeSetListener() {
-//                    @Override
-//                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-//
-//                    }
-//                });
-//                df.show(getFragmentManager(), "dialog");
+
             }
         });
 
@@ -216,23 +210,27 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         init();
+
         View cursorRadio = findViewById(R.id.testdisplay);
         cursorRadio.setOnTouchListener(new View.OnTouchListener() {
                                            @Override
                                            public boolean onTouch(View v, MotionEvent event) {
-                                               int x = (int) event.getX();
+                                               int x = (int) event.getRawX();
                                                int y = (int) event.getY();
+                                               View parent = (View) v.getParent();
+                                               int Border = (x - parent.getWidth()) - v.getWidth();
 
                                                switch (event.getAction()) {
                                                    case MotionEvent.ACTION_DOWN:
-                                                       Log.i("TAG", "touched down");
                                                        break;
                                                    case MotionEvent.ACTION_MOVE:
-                                                       Log.i("TAG", "moving: (" + x + ", " + y + ")");
-                                                       v.setTranslationX(event.getX());
+                                                       FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(v.getLayoutParams());
+                                                       lp.setMargins(x, 0, 0, Border);
+
+                                                       lp.setMarginStart(x);
+                                                       v.setLayoutParams(lp);
                                                        break;
                                                    case MotionEvent.ACTION_UP:
-                                                       Log.i("TAG", "touched up");
                                                        break;
                                                }
 

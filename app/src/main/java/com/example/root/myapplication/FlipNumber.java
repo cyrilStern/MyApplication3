@@ -34,7 +34,7 @@ public class FlipNumber extends ImageView {
 
     private final static String LAYOUT_VIEW_POSITION_TOP = "top";
     private final static String LAYOUT_VIEW_POSITION_BOTTOM = "bottom";
-    private final int CAMERA_DISTANCE = 1000;
+    private final int CAMERA_DISTANCE = 100;
     private final int MIN_FLIP_DURATION = 400;
     private final int VELOCITY_TO_DURATION_CONST = 1;
     private final int MAX_FLIP_DURATION = 400;
@@ -87,8 +87,8 @@ public class FlipNumber extends ImageView {
         return new BitmapDrawable(getResources(),bitmapDrawablewithBorder);
 
     }
-
     BitmapDrawable flip(BitmapDrawable d, boolean sense) {
+
         Matrix m = new Matrix();
         if (sense) {
             m.preScale(1, -1);

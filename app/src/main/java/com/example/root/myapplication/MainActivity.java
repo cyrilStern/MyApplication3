@@ -2,6 +2,7 @@ package com.example.root.myapplication;
 
 import android.animation.ValueAnimator;
 import android.app.DialogFragment;
+import android.app.IntentService;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -38,10 +39,26 @@ import android.widget.RelativeLayout;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.root.myapplication.connexion.ConnexionThread;
+import com.example.root.myapplication.connexion.ConnexionThreadRadio;
+import com.example.root.myapplication.connexion.UrlConnection;
+
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.zip.Inflater;
+
+import static com.example.root.myapplication.connexion.ConnctionInterface.URLPATH;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -82,20 +99,20 @@ public class MainActivity extends AppCompatActivity {
 
 
         fl = (FrameLayout) findViewById(R.id.seconde);
-        FlipNumberS1 = new FlipNumber(this, 0, -40);
-        FlipNumberS4 = new FlipNumber(this, 0, -40);
-        FlipNumberS2 = new FlipNumber(this, 0, -40);
-        FlipNumberS3 = new FlipNumber(this, 0, -40);
+        FlipNumberS1 = new FlipNumber(this, 0, -50);
+        FlipNumberS4 = new FlipNumber(this, 0, -50);
+        FlipNumberS2 = new FlipNumber(this, 0, -50);
+        FlipNumberS3 = new FlipNumber(this, 0, -50);
         fl.addView(FlipNumberS4);
         fl.addView(FlipNumberS3);
         fl.addView(FlipNumberS2);
         fl.addView(FlipNumberS1);
 
         fl1 = (FrameLayout) findViewById(R.id.diseconde);
-        FlipNumberSD1 = new FlipNumber(this, 0, -40);
-        FlipNumberSD4 = new FlipNumber(this, 0, -40);
-        FlipNumberSD2 = new FlipNumber(this, 0, -40);
-        FlipNumberSD3 = new FlipNumber(this, 0, -40);
+        FlipNumberSD1 = new FlipNumber(this, 0, -50);
+        FlipNumberSD4 = new FlipNumber(this, 0, -50);
+        FlipNumberSD2 = new FlipNumber(this, 0, -50);
+        FlipNumberSD3 = new FlipNumber(this, 0, -50);
         fl1.addView(FlipNumberSD1);
         fl1.addView(FlipNumberSD2);
         fl1.addView(FlipNumberSD3);
@@ -199,7 +216,10 @@ public class MainActivity extends AppCompatActivity {
         btalrm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent();
+                intent.setClass(getApplicationContext(), ConnexionThreadRadio.class);
+                Toast.makeText(getApplicationContext(), START_STRING, Toast.LENGTH_LONG).show();
+                startService(intent);
             }
         });
 
@@ -371,13 +391,11 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 }
-
-
             }
         };
 
         Messenger messager = new Messenger(handler);
-        Intent intent = new Intent(getApplicationContext(),ThreadServiceTimer.class);
+        Intent intent = new Intent(this, ThreadServiceTimer.class);
         intent.putExtra("messager",messager);
         start = startService(intent) !=null;
     }

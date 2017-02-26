@@ -106,11 +106,11 @@ public class FlipNumber extends ImageView {
         this.number = timeNumber;
         switch (position) {
             case 0:
-                this.setZ(4f);
                 int getressource0 = GetImagePathByNumber.getPath(number, FlipNumber.LAYOUT_VIEW_POSITION_TOP, getContext());
                 mFrontBitmapDrawable = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), getressource0));
                 updateDrawableBitmap();
                 this.position = 1;
+                this.setZ(4f);
                 break;
             case 1:
                 this.setZ(6f);
@@ -123,10 +123,10 @@ public class FlipNumber extends ImageView {
                 this.position = 3;
                 break;
             case 3:
-                this.setZ(2f);
                 this.onlyone = true;
                 this.flipToBotton(1, 1, false);
                 this.position = 0;
+                this.setZ(2f);
                 break;
         }
     }
@@ -169,7 +169,6 @@ public class FlipNumber extends ImageView {
                     if (position == 0) {
                         int getressource2 = GetImagePathByNumber.getPath(number, FlipNumber.LAYOUT_VIEW_POSITION_TOP, getContext());
                         mFrontBitmapDrawable = flip(new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), getressource2)), false);
-                        updateDrawableBitmap();
                         onlyone = false;
 
                     }

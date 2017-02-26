@@ -5,5 +5,5 @@ package com.example.root.myapplication.connexion;
  */
 
 public interface ConnctionInterface {
-    String URLPATH = "https://www.tracky.fr/radios";
+    String URLPATH = "https://www.tracky.fr/radio";
 }

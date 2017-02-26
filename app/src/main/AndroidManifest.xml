@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.root.myapplication">
 
+    <uses-permission android:name="android.permission.READ" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
@@ -24,10 +27,15 @@
 
         <service
             android:name=".ThreadServiceTimer"
-            android:enabled="true"></service>
+            android:enabled="true" />
         <service
             android:name=".connexion.ConnexionThreadRadio"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity
+            android:name=".myapplication.ListActivity"
+            android:label="@string/title_activity_list"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

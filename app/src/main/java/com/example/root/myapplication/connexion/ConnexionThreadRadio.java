@@ -61,8 +61,6 @@ public class ConnexionThreadRadio extends IntentService {
 
                     urlConnection = (HttpURLConnection) url.openConnection();
                     if (urlConnection.getResponseMessage().toString().equals("OK")) {
-                        Log.i("huhiuhiu", "jijoijio");
-                        Log.i("haaaaaiu", urlConnection.getResponseMessage().toString());
                         urlConnection = (HttpURLConnection) url.openConnection();
                     } else {
                         urlConnection.disconnect();
@@ -75,7 +73,6 @@ public class ConnexionThreadRadio extends IntentService {
                     String line = null;
                     while ((line = reader.readLine()) != null) {
                         sb.append(line + "\n");
-                        // Read line by line
                     }
                     JSONArray jsonArray = new JSONArray(sb.toString());
                     RadioDAO radioDAO = new RadioDAO(getApplicationContext());
@@ -104,6 +101,7 @@ public class ConnexionThreadRadio extends IntentService {
                             radioDAO.open();
                             final Radio r = radioDAO.retrieve(Long.valueOf(1));
                             Log.i("ouifranchement", r.getUrl());
+                            radioDAO.close();
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {

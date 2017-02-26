@@ -81,6 +81,19 @@ public class RadioDAO implements IDAO<Radio, Long>, DAOConstant {
         return radioList;
     }
 
+    public List<String> findAllUrl() throws Exception {
+        List<String> radioList = new ArrayList<String>();
+        Cursor cursor = db.query(TABLE_RADIO, ALL, null, null, null, null, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            String url = cursor.getString(cursor.getColumnIndex(NOM_COLONNE_URL));
+            radioList.add(url);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return radioList;
+    }
+
     @Override
     public void update(Radio radio) throws Exception {
         // db.delete(TABLE_RADIO, _ID + " = " + aLong,null);

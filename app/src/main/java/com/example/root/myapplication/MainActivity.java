@@ -7,11 +7,16 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -42,6 +47,7 @@ import android.widget.Toast;
 import com.example.root.myapplication.connexion.ConnexionThread;
 import com.example.root.myapplication.connexion.ConnexionThreadRadio;
 import com.example.root.myapplication.connexion.UrlConnection;
+import com.example.root.myapplication.myapplication.ListActivity;
 
 import org.json.JSONObject;
 
@@ -51,6 +57,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Calendar;
@@ -69,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
     private Handler handler;
     private FrameLayout fl,fl1,fl2,fl3,fl4,fl5;
     private ImageView iw,iw1,iw2,iw3,iw4,iw5;
-    private Boolean start;
+    private Boolean start, setplayerfirstlaunch, setplayerfirstlaunch2;
     private LinearLayout linearLayout;
     private boolean firstlaunch;
     private ImageView imageview;
@@ -82,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
     private FlipNumber FlipNumberM1, FlipNumberM2, FlipNumberM3, FlipNumberM4, FlipNumberMD1, FlipNumberMD2, FlipNumberMD3, FlipNumberMD4;
     private FlipNumber FlipNumberH1, FlipNumberH2, FlipNumberH3, FlipNumberH4, FlipNumberHD1, FlipNumberHD2, FlipNumberHD3, FlipNumberHD4;
     private Button btalrm;
+    private MediaPlayer mplayer, mplayer2;
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +104,8 @@ public class MainActivity extends AppCompatActivity {
         savehour = START_STRING;
         savediminu = START_STRING;
         savehou = START_STRING;
-
+        setplayerfirstlaunch = true;
+        setplayerfirstlaunch2 = true;
 
         fl = (FrameLayout) findViewById(R.id.seconde);
         FlipNumberS1 = new FlipNumber(this, 0, -50);
@@ -220,8 +229,14 @@ public class MainActivity extends AppCompatActivity {
                 intent.setClass(getApplicationContext(), ConnexionThreadRadio.class);
                 Toast.makeText(getApplicationContext(), START_STRING, Toast.LENGTH_LONG).show();
                 startService(intent);
+                Intent intent2 = new Intent();
+                intent2.setClass(getApplicationContext(), ListActivity.class);
+                startActivity(intent2);
             }
         });
+        mplayer = new MediaPlayer();
+        mplayer2 = new MediaPlayer();
+
 
     }
 
@@ -235,15 +250,56 @@ public class MainActivity extends AppCompatActivity {
         cursorRadio.setOnTouchListener(new View.OnTouchListener() {
                                            @Override
                                            public boolean onTouch(View v, MotionEvent event) {
+
                                                int x = (int) event.getRawX();
+                                               Log.i("position", String.valueOf(x));
                                                int y = (int) event.getY();
                                                View parent = (View) v.getParent();
                                                int Border = (x - parent.getWidth()) - v.getWidth();
-
                                                switch (event.getAction()) {
                                                    case MotionEvent.ACTION_DOWN:
                                                        break;
                                                    case MotionEvent.ACTION_MOVE:
+                                                       if (setplayerfirstlaunch) {
+                                                           AssetManager assetManager = getAssets();
+                                                           AssetFileDescriptor descriptor = null;
+                                                           try {
+                                                               descriptor = assetManager.openFd("audio/RadioTune.mp3");
+                                                               mplayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
+                                                               mplayer.prepare();
+                                                               mplayer.start();
+                                                               mplayer.setLooping(true);
+                                                               setplayerfirstlaunch = false;
+                                                           } catch (IOException e1) {
+                                                               // TODO Auto-generated catch block
+                                                               e1.printStackTrace();
+                                                           }
+
+                                                       }
+                                                       if ((x > 100) && (x < 250) && setplayerfirstlaunch2) {
+                                                           setplayerfirstlaunch2 = false;
+                                                           Thread th = new Thread(new Runnable() {
+                                                               @Override
+                                                               public void run() {
+                                                                   mplayer2.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                                                                   try {
+                                                                       mplayer2.setDataSource("http://stream.ouifm.fr/ouifm-high.mp3");
+                                                                   } catch (IOException e) {
+                                                                       e.printStackTrace();
+                                                                   }
+                                                                   try {
+                                                                       mplayer2.prepare();
+                                                                       mplayer2.start();
+                                                                       while (mplayer2.isPlaying()) {
+                                                                           //mplayer.stop();
+                                                                       }
+                                                                   } catch (IOException e) {
+                                                                       e.printStackTrace();
+                                                                   }
+                                                               }
+                                                           });
+                                                           th.start();
+                                                       }
                                                        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(v.getLayoutParams());
                                                        lp.setMargins(x, 0, 0, Border);
 
@@ -251,7 +307,12 @@ public class MainActivity extends AppCompatActivity {
                                                        v.setLayoutParams(lp);
                                                        break;
                                                    case MotionEvent.ACTION_UP:
+                                                       mplayer.stop();
+                                                       mplayer.reset();
+
+                                                       setplayerfirstlaunch = true;
                                                        break;
+
                                                }
 
                                                return true;

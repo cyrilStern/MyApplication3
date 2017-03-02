@@ -89,7 +89,7 @@ public class FlipNumber extends ImageView {
 
         imageViewParams = new FrameLayout.LayoutParams(
                 (FrameLayout.LayoutParams.MATCH_PARENT),
-                (this.getHeight() /));
+                (this.getHeight()));
 
         scale = this.getResources().getDisplayMetrics().density;
         Log.i("testesteust", String.valueOf(scale));

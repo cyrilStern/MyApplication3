@@ -20,17 +20,41 @@
         android:orientation="vertical"
         android:weightSum="1">
 
-        <include
-            layout="@layout/fliplayoutclocknumber"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <include
+                    layout="@layout/fliplayoutclocknumber"
+                    android:layout_width="581dp"
+                    android:layout_height="match_parent"></include>
+
+                <include
+                    layout="@layout/secondlayoutflip"
+                    android:layout_width="match_parent"
+                    android:layout_height="152dp" />
+
+            </LinearLayout>
+        </FrameLayout>
+
 
         <include
             layout="@layout/affichageradio"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_height="88dp" />
 
         <include
             layout="@layout/consolebutton"
@@ -38,4 +62,5 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
     </LinearLayout>
+
 </RelativeLayout>

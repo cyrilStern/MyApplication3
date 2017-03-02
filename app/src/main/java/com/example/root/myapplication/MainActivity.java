@@ -70,7 +70,7 @@ import static com.example.root.myapplication.connexion.ConnctionInterface.URLPAT
 
 public class MainActivity extends AppCompatActivity {
     private static final String START_STRING = "START";
-    private final int bigsize = 40;
+    private final int bigsize = 11;
     private final int littlesize = 0;
     public Bitmap mybitmap,newbmp,bitmap,bmp;
     private Handler handler;
@@ -108,20 +108,20 @@ public class MainActivity extends AppCompatActivity {
         setplayerfirstlaunch2 = true;
 
         fl = (FrameLayout) findViewById(R.id.seconde);
-        FlipNumberS1 = new FlipNumber(this, 0, -50);
-        FlipNumberS4 = new FlipNumber(this, 0, -50);
-        FlipNumberS2 = new FlipNumber(this, 0, -50);
-        FlipNumberS3 = new FlipNumber(this, 0, -50);
+        FlipNumberS1 = new FlipNumber(this, 0, bigsize);
+        FlipNumberS4 = new FlipNumber(this, 0, bigsize);
+        FlipNumberS2 = new FlipNumber(this, 0, bigsize);
+        FlipNumberS3 = new FlipNumber(this, 0, bigsize);
         fl.addView(FlipNumberS4);
         fl.addView(FlipNumberS3);
         fl.addView(FlipNumberS2);
         fl.addView(FlipNumberS1);
 
         fl1 = (FrameLayout) findViewById(R.id.diseconde);
-        FlipNumberSD1 = new FlipNumber(this, 0, -50);
-        FlipNumberSD4 = new FlipNumber(this, 0, -50);
-        FlipNumberSD2 = new FlipNumber(this, 0, -50);
-        FlipNumberSD3 = new FlipNumber(this, 0, -50);
+        FlipNumberSD1 = new FlipNumber(this, 0, bigsize);
+        FlipNumberSD4 = new FlipNumber(this, 0, bigsize);
+        FlipNumberSD2 = new FlipNumber(this, 0, bigsize);
+        FlipNumberSD3 = new FlipNumber(this, 0, bigsize);
         fl1.addView(FlipNumberSD1);
         fl1.addView(FlipNumberSD2);
         fl1.addView(FlipNumberSD3);

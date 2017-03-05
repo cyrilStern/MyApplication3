@@ -54,46 +54,47 @@ public class FlipNumber extends ImageView {
     private FrameLayout.LayoutParams imageViewParams;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public FlipNumber(Context context, int position) {
         super(context);
         this.position = position;
         initCtx(context);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public FlipNumber(Context context, int position, int size) {
         super(context);
         this.position = position;
         this.size = size;
         initCtx(context);
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public FlipNumber(Context context, AttributeSet attributeSet) {
         super(context);
 
         initCtx(context);
     }
 
-    @Override
-    public void setMaxHeight(int maxHeight) {
 
-        super.setMaxHeight(maxHeight / 5);
-
-    }
-
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void initCtx(Context context){
+        this.setPivotY(this.getBottom());
+
         scale = context.getResources().getDisplayMetrics().density;
         int getressource0 = GetImagePathByNumber.getPath(number, FlipNumber.LAYOUT_VIEW_POSITION_TOP, getContext());
         mFrontBitmapDrawable = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), getressource0));
         horizontFlipmatrix = new Matrix();
         updateDrawableBitmap();
         this.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+        imageViewParams = (FrameLayout.LayoutParams) this.getLayoutParams();
+        if (size == 1)
+            imageViewParams.height = this.getResources().getDisplayMetrics().heightPixels / 7;
 
-        imageViewParams = new FrameLayout.LayoutParams(
-                (FrameLayout.LayoutParams.MATCH_PARENT),
-                (this.getHeight()));
+        //imageViewParams.width = this.getResources().getDisplayMetrics().heightPixels/4;
+        this.setLayoutParams(imageViewParams);
+//setCameraDistance(CAMERA_DISTANCE);
 
-        scale = this.getResources().getDisplayMetrics().density;
-        Log.i("testesteust", String.valueOf(scale));
-        //setCameraDistance(CAMERA_DISTANCE);
     }
 
     private BitmapDrawable bitmapDrawablewithBorder(BitmapDrawable bitmapDrawable){
@@ -102,6 +103,13 @@ public class FlipNumber extends ImageView {
         return new BitmapDrawable(getResources(),bitmapDrawablewithBorder);
 
     }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+    }
+
     BitmapDrawable flip(BitmapDrawable d, boolean sense) {
 
         Matrix m = new Matrix();
@@ -126,6 +134,7 @@ public class FlipNumber extends ImageView {
                 updateDrawableBitmap();
                 this.position = 1;
                 this.setZ(4f);
+
                 break;
             case 1:
                 this.setZ(6f);
@@ -170,6 +179,7 @@ public class FlipNumber extends ImageView {
             timeAnimator.setDuration(500);
         }
         timeAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener(){
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 if (valueAnimator.getAnimatedFraction() > 0.5 && onlyone) {
@@ -177,14 +187,12 @@ public class FlipNumber extends ImageView {
                         int getressource2 = GetImagePathByNumber.getPath(number, FlipNumber.LAYOUT_VIEW_POSITION_BOTTOM, getContext());
                         mFrontBitmapDrawable = flip(new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), getressource2)), true);
                         updateDrawableBitmap();
-
                         onlyone = false;
                     }
                     if (position == 0) {
                         int getressource2 = GetImagePathByNumber.getPath(number, FlipNumber.LAYOUT_VIEW_POSITION_TOP, getContext());
                         mFrontBitmapDrawable = flip(new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), getressource2)), false);
                         onlyone = false;
-
                     }
                 }
             }
@@ -195,7 +203,6 @@ public class FlipNumber extends ImageView {
         Keyframe shadowKeyFrameEnd = Keyframe.ofFloat(1,1);
         PropertyValuesHolder shadowsValueHolder = PropertyValuesHolder.ofKeyframe("shadow",shadowKeyFrameStart,shadowKeyFrameMid,shadowKeyFrameEnd);
         ObjectAnimator objanimatorColor = ObjectAnimator.ofPropertyValuesHolder(this,shadowsValueHolder);
-
         AnimatorSet set = new AnimatorSet();
         int duration = MAX_FLIP_DURATION - Math.abs(velocity)/VELOCITY_TO_DURATION_CONST;
         duration = duration < MIN_FLIP_DURATION ? MIN_FLIP_DURATION :duration;
@@ -230,11 +237,9 @@ public class FlipNumber extends ImageView {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        this.setPivotY(0f);
         this.setPivotY(this.getBottom());
-        this.setMaxHeight(mFrontBitmapDrawable.getIntrinsicHeight());
-        Log.i("testscale2", String.valueOf(this.getHeight()));
-        this.setLayoutParams(imageViewParams);
+
+        //this.setLayoutParams(imageViewParams);
         //this.setBackgroundColor(Color.parseColor("#ffffff"));
         //if (position == 2 || position == 3) horizontFlipmatrix.setScale(-1, -1, w / 2, h / 2);
 

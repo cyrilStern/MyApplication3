@@ -48,6 +48,7 @@ import com.example.root.myapplication.connexion.ConnexionThread;
 import com.example.root.myapplication.connexion.ConnexionThreadRadio;
 import com.example.root.myapplication.connexion.UrlConnection;
 import com.example.root.myapplication.myapplication.ListActivity;
+import com.example.root.myapplication.myapplication.audio.ImageShowRadio;
 
 import org.json.JSONObject;
 
@@ -70,8 +71,8 @@ import static com.example.root.myapplication.connexion.ConnctionInterface.URLPAT
 
 public class MainActivity extends AppCompatActivity {
     private static final String START_STRING = "START";
-    private final int bigsize = 11;
-    private final int littlesize = 0;
+    private final int bigsize = 10;
+    private final int littlesize = 1;
     public Bitmap mybitmap,newbmp,bitmap,bmp;
     private Handler handler;
     private FrameLayout fl,fl1,fl2,fl3,fl4,fl5;
@@ -90,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
     private FlipNumber FlipNumberH1, FlipNumberH2, FlipNumberH3, FlipNumberH4, FlipNumberHD1, FlipNumberHD2, FlipNumberHD3, FlipNumberHD4;
     private Button btalrm;
     private MediaPlayer mplayer, mplayer2;
+    private Thread th;
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,20 +110,20 @@ public class MainActivity extends AppCompatActivity {
         setplayerfirstlaunch2 = true;
 
         fl = (FrameLayout) findViewById(R.id.seconde);
-        FlipNumberS1 = new FlipNumber(this, 0, bigsize);
-        FlipNumberS4 = new FlipNumber(this, 0, bigsize);
-        FlipNumberS2 = new FlipNumber(this, 0, bigsize);
-        FlipNumberS3 = new FlipNumber(this, 0, bigsize);
+        FlipNumberS1 = new FlipNumber(this, 0, littlesize);
+        FlipNumberS4 = new FlipNumber(this, 0, littlesize);
+        FlipNumberS2 = new FlipNumber(this, 0, littlesize);
+        FlipNumberS3 = new FlipNumber(this, 0, littlesize);
         fl.addView(FlipNumberS4);
         fl.addView(FlipNumberS3);
         fl.addView(FlipNumberS2);
         fl.addView(FlipNumberS1);
 
         fl1 = (FrameLayout) findViewById(R.id.diseconde);
-        FlipNumberSD1 = new FlipNumber(this, 0, bigsize);
-        FlipNumberSD4 = new FlipNumber(this, 0, bigsize);
-        FlipNumberSD2 = new FlipNumber(this, 0, bigsize);
-        FlipNumberSD3 = new FlipNumber(this, 0, bigsize);
+        FlipNumberSD1 = new FlipNumber(this, 0, littlesize);
+        FlipNumberSD4 = new FlipNumber(this, 0, littlesize);
+        FlipNumberSD2 = new FlipNumber(this, 0, littlesize);
+        FlipNumberSD3 = new FlipNumber(this, 0, littlesize);
         fl1.addView(FlipNumberSD1);
         fl1.addView(FlipNumberSD2);
         fl1.addView(FlipNumberSD3);
@@ -165,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
         fl5.addView(FlipNumberHD2);
         fl5.addView(FlipNumberHD3);
         fl5.addView(FlipNumberHD4);
+        init();
 
 
     }
@@ -235,17 +238,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         mplayer = new MediaPlayer();
-        mplayer2 = new MediaPlayer();
-
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onResume() {
         super.onResume();
-        init();
-
+        Log.i("passe", "par le init");
         View cursorRadio = findViewById(R.id.testdisplay);
         cursorRadio.setOnTouchListener(new View.OnTouchListener() {
                                            @Override
@@ -276,11 +275,13 @@ public class MainActivity extends AppCompatActivity {
                                                            }
 
                                                        }
-                                                       if ((x > 100) && (x < 250) && setplayerfirstlaunch2) {
+                                                       if ((x > 100) && (x < 150) && setplayerfirstlaunch2) {
+                                                           new ImageShowRadio(getApplicationContext(), (FrameLayout) findViewById(R.id.messageWarning), "ouifm2014logo.png");
                                                            setplayerfirstlaunch2 = false;
-                                                           Thread th = new Thread(new Runnable() {
+                                                           th = new Thread(new Runnable() {
                                                                @Override
                                                                public void run() {
+                                                                   mplayer2 = new MediaPlayer();
                                                                    mplayer2.setAudioStreamType(AudioManager.STREAM_MUSIC);
                                                                    try {
                                                                        mplayer2.setDataSource("http://stream.ouifm.fr/ouifm-high.mp3");
@@ -299,6 +300,46 @@ public class MainActivity extends AppCompatActivity {
                                                                }
                                                            });
                                                            th.start();
+                                                       }
+                                                       if ((x > 150) && (x < 250) && setplayerfirstlaunch2) {
+                                                           new ImageShowRadio(getApplicationContext(), (FrameLayout) findViewById(R.id.messageWarning), "rmclogo.png");
+                                                           Log.i("testradio", String.valueOf(MainActivity.this.getResources().getIdentifier("rmclogo.png", "drawable", getApplicationContext().getApplicationContext().getPackageName())));
+                                                           setplayerfirstlaunch2 = false;
+                                                           th = new Thread(new Runnable() {
+                                                               @Override
+                                                               public void run() {
+                                                                   mplayer2 = new MediaPlayer();
+                                                                   mplayer2.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                                                                   try {
+                                                                       mplayer2.setDataSource("http://aifae8cah8.lb.vip.cdn.dvmr.fr/rmcinfo");
+                                                                   } catch (IOException e) {
+                                                                       e.printStackTrace();
+                                                                   }
+                                                                   try {
+                                                                       mplayer2.prepare();
+                                                                       mplayer2.start();
+                                                                       while (mplayer2.isPlaying()) {
+                                                                           //mplayer.stop();
+                                                                       }
+                                                                   } catch (IOException e) {
+                                                                       e.printStackTrace();
+                                                                   }
+                                                               }
+                                                           });
+                                                           th.start();
+                                                       } else {
+                                                           Log.i("position", "dead");
+                                                           if (th instanceof Thread && mplayer2.isPlaying()) {
+                                                               Log.i("position", "dead");
+
+                                                               mplayer2.stop();
+                                                               mplayer.reset();
+                                                               mplayer2.reset();
+                                                               mplayer2.release();
+                                                               th.interrupt();
+                                                               th = null;
+                                                               setplayerfirstlaunch2 = true;
+                                                           }
                                                        }
                                                        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(v.getLayoutParams());
                                                        lp.setMargins(x, 0, 0, Border);

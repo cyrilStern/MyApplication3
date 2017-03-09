@@ -49,6 +49,7 @@ import com.example.root.myapplication.connexion.ConnexionThreadRadio;
 import com.example.root.myapplication.connexion.UrlConnection;
 import com.example.root.myapplication.myapplication.ListActivity;
 import com.example.root.myapplication.myapplication.audio.ImageShowRadio;
+import com.example.root.myapplication.myapplication.audio.PlayerAudio;
 
 import org.json.JSONObject;
 
@@ -275,70 +276,23 @@ public class MainActivity extends AppCompatActivity {
                                                            }
 
                                                        }
-                                                       if ((x > 100) && (x < 150) && setplayerfirstlaunch2) {
-                                                           new ImageShowRadio(getApplicationContext(), (FrameLayout) findViewById(R.id.messageWarning), "ouifm2014logo.png");
+                                                       if ((x > 100) && (x < 150)) {
+                                                           new ImageShowRadio(getApplicationContext(), (FrameLayout) findViewById(R.id.messageWarning), "ouifm2014logo");
                                                            setplayerfirstlaunch2 = false;
-                                                           th = new Thread(new Runnable() {
-                                                               @Override
-                                                               public void run() {
-                                                                   mplayer2 = new MediaPlayer();
-                                                                   mplayer2.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                                                                   try {
-                                                                       mplayer2.setDataSource("http://stream.ouifm.fr/ouifm-high.mp3");
-                                                                   } catch (IOException e) {
-                                                                       e.printStackTrace();
-                                                                   }
-                                                                   try {
-                                                                       mplayer2.prepare();
-                                                                       mplayer2.start();
-                                                                       while (mplayer2.isPlaying()) {
-                                                                           //mplayer.stop();
-                                                                       }
-                                                                   } catch (IOException e) {
-                                                                       e.printStackTrace();
-                                                                   }
-                                                               }
-                                                           });
-                                                           th.start();
-                                                       }
-                                                       if ((x > 150) && (x < 250) && setplayerfirstlaunch2) {
-                                                           new ImageShowRadio(getApplicationContext(), (FrameLayout) findViewById(R.id.messageWarning), "rmclogo.png");
-                                                           Log.i("testradio", String.valueOf(MainActivity.this.getResources().getIdentifier("rmclogo.png", "drawable", getApplicationContext().getApplicationContext().getPackageName())));
-                                                           setplayerfirstlaunch2 = false;
-                                                           th = new Thread(new Runnable() {
-                                                               @Override
-                                                               public void run() {
-                                                                   mplayer2 = new MediaPlayer();
-                                                                   mplayer2.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                                                                   try {
-                                                                       mplayer2.setDataSource("http://aifae8cah8.lb.vip.cdn.dvmr.fr/rmcinfo");
-                                                                   } catch (IOException e) {
-                                                                       e.printStackTrace();
-                                                                   }
-                                                                   try {
-                                                                       mplayer2.prepare();
-                                                                       mplayer2.start();
-                                                                       while (mplayer2.isPlaying()) {
-                                                                           //mplayer.stop();
-                                                                       }
-                                                                   } catch (IOException e) {
-                                                                       e.printStackTrace();
-                                                                   }
-                                                               }
-                                                           });
-                                                           th.start();
-                                                       } else {
-                                                           Log.i("position", "dead");
-                                                           if (th instanceof Thread && mplayer2.isPlaying()) {
-                                                               Log.i("position", "dead");
+                                                           try {
+                                                               PlayerAudio.getInstance(getApplicationContext(), "http://stream.ouifm.fr/ouifm-high.mp3");
+                                                           } catch (IOException e) {
+                                                               e.printStackTrace();
+                                                           }
 
-                                                               mplayer2.stop();
-                                                               mplayer.reset();
-                                                               mplayer2.reset();
-                                                               mplayer2.release();
-                                                               th.interrupt();
-                                                               th = null;
-                                                               setplayerfirstlaunch2 = true;
+                                                       }
+                                                       if ((x > 150) && (x < 200)) {
+                                                           new ImageShowRadio(getApplicationContext(), (FrameLayout) findViewById(R.id.messageWarning), "rmclogo");
+                                                           setplayerfirstlaunch2 = false;
+                                                           try {
+                                                               PlayerAudio.getInstance(getApplicationContext(), "http://mp3lg3.scdn.arkena.com/10489/europe1.mp3");
+                                                           } catch (IOException e) {
+                                                               e.printStackTrace();
                                                            }
                                                        }
                                                        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(v.getLayoutParams());
@@ -350,7 +304,6 @@ public class MainActivity extends AppCompatActivity {
                                                    case MotionEvent.ACTION_UP:
                                                        mplayer.stop();
                                                        mplayer.reset();
-
                                                        setplayerfirstlaunch = true;
                                                        break;
 

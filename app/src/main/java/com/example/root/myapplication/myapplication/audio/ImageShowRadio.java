@@ -43,7 +43,9 @@ public class ImageShowRadio extends ImageView {
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void init(Context context) {
-        this.setBackground(context.getResources().getDrawable(R.drawable.rmclogo));//context.getResources().getIdentifier(imagePAth,"drawable",context.getApplicationContext().getPackageName())));
+        Log.i("imagepath", String.valueOf(getResources().getIdentifier(imagePAth, "drawable", context.getPackageName())));
+        // context.getResources().getIdentifier()
+        this.setBackground(context.getResources().getDrawable(getResources().getIdentifier(imagePAth, "drawable", context.getPackageName())));
         rl.addView(this);
         Animation fadeInAnimation = AnimationUtils.loadAnimation(context, R.anim.fadein);
         AnimationSet animation = new AnimationSet(false); //change to false

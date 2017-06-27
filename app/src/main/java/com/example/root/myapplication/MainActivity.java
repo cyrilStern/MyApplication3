@@ -44,6 +44,7 @@ import android.widget.RelativeLayout;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.root.myapplication.connexion.ConnectionWebserviceApi;
 import com.example.root.myapplication.connexion.ConnexionThread;
 import com.example.root.myapplication.connexion.ConnexionThreadRadio;
 import com.example.root.myapplication.connexion.UrlConnection;
@@ -74,10 +75,10 @@ public class MainActivity extends AppCompatActivity {
     private static final String START_STRING = "START";
     private final int bigsize = 10;
     private final int littlesize = 1;
-    public Bitmap mybitmap,newbmp,bitmap,bmp;
+    public Bitmap mybitmap, newbmp, bitmap, bmp;
     private Handler handler;
-    private FrameLayout fl,fl1,fl2,fl3,fl4,fl5;
-    private ImageView iw,iw1,iw2,iw3,iw4,iw5;
+    private FrameLayout fl, fl1, fl2, fl3, fl4, fl5;
+    private ImageView iw, iw1, iw2, iw3, iw4, iw5;
     private Boolean start, setplayerfirstlaunch, setplayerfirstlaunch2;
     private LinearLayout linearLayout;
     private boolean firstlaunch;
@@ -93,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btalrm;
     private MediaPlayer mplayer, mplayer2;
     private Thread th;
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -230,12 +232,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
-                intent.setClass(getApplicationContext(), ConnexionThreadRadio.class);
+                intent.setClass(getApplicationContext(), ConnectionWebserviceApi.class);
                 Toast.makeText(getApplicationContext(), START_STRING, Toast.LENGTH_LONG).show();
                 startService(intent);
-                Intent intent2 = new Intent();
-                intent2.setClass(getApplicationContext(), ListActivity.class);
-                startActivity(intent2);
+//                Intent intent2 = new Intent();
+//                intent2.setClass(getApplicationContext(), ListActivity.class);
+//                startActivity(intent2);
             }
         });
         mplayer = new MediaPlayer();
@@ -276,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
                                                            }
 
                                                        }
-                                                       if ((x > 100) && (x < 150)) {
+                                                       if ((x > 100) && (x < 150) && setplayerfirstlaunch2) {
                                                            new ImageShowRadio(getApplicationContext(), (FrameLayout) findViewById(R.id.messageWarning), "ouifm2014logo");
                                                            setplayerfirstlaunch2 = false;
                                                            try {
@@ -285,8 +287,7 @@ public class MainActivity extends AppCompatActivity {
                                                                e.printStackTrace();
                                                            }
 
-                                                       }
-                                                       if ((x > 150) && (x < 200)) {
+                                                       } else if ((x > 190) && (x < 250) && setplayerfirstlaunch2) {
                                                            new ImageShowRadio(getApplicationContext(), (FrameLayout) findViewById(R.id.messageWarning), "rmclogo");
                                                            setplayerfirstlaunch2 = false;
                                                            try {
@@ -294,6 +295,8 @@ public class MainActivity extends AppCompatActivity {
                                                            } catch (IOException e) {
                                                                e.printStackTrace();
                                                            }
+                                                       } else {
+                                                           setplayerfirstlaunch2 = true;
                                                        }
                                                        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(v.getLayoutParams());
                                                        lp.setMargins(x, 0, 0, Border);
@@ -332,8 +335,9 @@ public class MainActivity extends AppCompatActivity {
             disecond = "0";
         } else disecond = String.valueOf(secondint.toString().charAt(1));
 
-        handler = new Handler(){
+        handler = new Handler() {
             boolean zeroToNine = true;
+
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void handleMessage(Message msg) {
@@ -359,7 +363,7 @@ public class MainActivity extends AppCompatActivity {
                             FlipNumberSD4.activActionPositonFlip(Integer.valueOf(disecond));
                             savediseconde = disecond;
                         }
-                    }else{
+                    } else {
                         second = String.valueOf(secondint.toString().charAt(1));
                         disecond = String.valueOf(secondint.toString().charAt(0));
                         FlipNumberS1.activActionPositonFlip(Integer.valueOf(second));
@@ -451,10 +455,9 @@ public class MainActivity extends AppCompatActivity {
 
         Messenger messager = new Messenger(handler);
         Intent intent = new Intent(this, ThreadServiceTimer.class);
-        intent.putExtra("messager",messager);
-        start = startService(intent) !=null;
+        intent.putExtra("messager", messager);
+        start = startService(intent) != null;
     }
-
 
 
 }

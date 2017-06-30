@@ -7,8 +7,10 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.example.root.myapplication.DAO.Radio;
+import com.example.root.myapplication.DAO.RadioDAO;
 import com.example.root.myapplication.myapplication.connexion.*;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -70,7 +72,6 @@ public class ConnectionWebserviceApi extends Service implements com.example.root
             @Override
             public void run() {
                 try {
-
                     HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(ConnctionInterface.URL_GETTOKENAPI).openConnection();
                     httpURLConnection.setRequestMethod("POST");
                     httpURLConnection.setRequestProperty("password", ConnctionInterface.PASSWORD_API);
@@ -101,6 +102,19 @@ public class ConnectionWebserviceApi extends Service implements com.example.root
                     os.close();
                     in = new BufferedInputStream(httpURLConnection.getInputStream());
                     String liste = readStream(in, false);
+                    try {
+                        JSONArray array = new JSONArray(liste);
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject radio = array.getJSONObject(i);
+                            RadioDAO radioDAO = new RadioDAO(getApplicationContext());
+                            radioDAO.create(new Radio(radio.getString("id"), radio.getString("name"), radio.getString("path"), String.valueOf(Math.round(Math.random() * 1000))));
+                            radioDAO.close();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     Log.i(TAG, "run: " + liste);
                     httpURLConnection.disconnect();
 

@@ -55,12 +55,12 @@
 
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="4">
                 <include
                     layout="@layout/secondlayoutflip"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="90dp" />
                 </FrameLayout>
 
 
@@ -71,7 +71,7 @@
         <include
             layout="@layout/affichageradio"
             android:layout_width="match_parent"
-            android:layout_height="88dp" />
+            android:layout_height="54dp" />
 
         <include
             layout="@layout/consolebutton"

@@ -25,11 +25,14 @@ public class RadioHelper extends SQLiteOpenHelper implements DAOConstant {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(DELETE_DB);
         db.execSQL(CREATION_BD);
+        db.close();
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(DELETE_DB);
         onCreate(db);
+        db.close();
+
     }
 }

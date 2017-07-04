@@ -55,6 +55,7 @@ public class RadioDAO implements IDAO<Radio, Long>, DAOConstant {
             values.put(NOM_COLONNE_URL, radio.getUrl());
             Log.i(TAG, "create: " + radio.getName() + radio.getUrl() + radio.getChannel());
             db.insert(TABLE_RADIO, null, values);
+            db.close();
             this.close();
         }
     }

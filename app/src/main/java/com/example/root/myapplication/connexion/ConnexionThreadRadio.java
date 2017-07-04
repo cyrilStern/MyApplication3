@@ -82,10 +82,12 @@ public class ConnexionThreadRadio extends IntentService {
                         String name = jsonObject.getString("radioStationName");
                         String urlRadio = jsonObject.getString("radioUrl");
                         String channel = String.valueOf(Math.floor(Math.random() * 10));
-                        radioDAO.create(new Radio(null, name, urlRadio, channel));
+                        try {
+                            radioDAO.create(new Radio(null, name, urlRadio, channel));
+                        } finally {
+                        }
                     }
 
-                    radioDAO.close();
                     Bundle b = new Bundle();
                     b.putString("collection", sb.toString());
                     // envoyer le message au Hanlder

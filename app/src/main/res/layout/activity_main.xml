@@ -5,7 +5,7 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorPrimary"
+    android:background="@drawable/formicabackgroungbisbis"
     android:padding="10sp"
     tools:context="com.example.root.myapplication.MainActivity">
 
@@ -30,6 +30,13 @@
             android:layout_marginRight="15dip"
             android:layout_weight="1">
 
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="4">
+
+            </FrameLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -46,10 +53,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1">
-                <include
-                    layout="@layout/fliplayoutclocknumber"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"></include>
+
+                    <include
+                        layout="@layout/fliplayoutclocknumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"></include>
 
                 </FrameLayout>
 
@@ -57,10 +65,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="4">
-                <include
-                    layout="@layout/secondlayoutflip"
-                    android:layout_width="match_parent"
-                    android:layout_height="90dp" />
+
+                    <include
+                        layout="@layout/secondlayoutflip"
+                        android:layout_width="match_parent"
+                        android:layout_height="90dp" />
                 </FrameLayout>
 
 
@@ -71,18 +80,37 @@
         <include
             layout="@layout/affichageradio"
             android:layout_width="match_parent"
-            android:layout_height="54dp" />
+            android:layout_height="54dp"
+            android:visibility="invisible" />
 
         <include
             layout="@layout/consolebutton"
-            android:layout_width="match_parent"
+            android:layout_width="110dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:visibility="visible" />
+
     </LinearLayout>
 
     <FrameLayout
         android:id="@+id/messageWarning"
         android:layout_width="60dp"
-        android:layout_height="60dp"></FrameLayout>
+        android:layout_height="60dp"
+        android:background="@drawable/iconradio">
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/radiobuttonframe"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true">
+
+        <include
+            layout="@layout/radiobutton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="200" />
+    </FrameLayout>
 
 </RelativeLayout>

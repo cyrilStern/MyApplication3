@@ -38,7 +38,7 @@ public class ThreadServiceTimer extends Service {
         ticker = new Thread(new Ticker());
         ticker.start();
         }
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     @Override

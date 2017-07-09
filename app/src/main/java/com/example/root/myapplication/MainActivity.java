@@ -17,6 +17,7 @@ import android.graphics.Matrix;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -40,15 +41,9 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.root.myapplication.connexion.ConnectionWebserviceApi;
-import com.example.root.myapplication.connexion.ConnexionThread;
-import com.example.root.myapplication.connexion.ConnexionThreadRadio;
-import com.example.root.myapplication.connexion.UrlConnection;
-import com.example.root.myapplication.myapplication.ListActivity;
 import com.example.root.myapplication.myapplication.audio.ImageShowRadio;
 import com.example.root.myapplication.myapplication.audio.PlayerAudio;
 
@@ -94,6 +89,12 @@ public class MainActivity extends AppCompatActivity {
     private Button btalrm;
     private MediaPlayer mplayer, mplayer2;
     private Thread th;
+    private double mCurrAngle = 0;
+    private double mPrevAngle = 0;
+    private float rotationCycle = 0;
+    private ImageShowRadio imageShowRadio;
+    private FrameLayout logoFrameLayout;
+    private PlayerAudio playeraudio;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -103,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_main);
+        logoFrameLayout = (FrameLayout) findViewById(R.id.messageWarning);
+        imageShowRadio = ImageShowRadio.getInstance(this, logoFrameLayout);
         btalrm = (Button) findViewById(R.id.alarmButton);
         savediseconde = START_STRING;
         savediminute = START_STRING;
@@ -111,7 +114,11 @@ public class MainActivity extends AppCompatActivity {
         savehou = START_STRING;
         setplayerfirstlaunch = true;
         setplayerfirstlaunch2 = true;
-
+        try {
+            playeraudio = PlayerAudio.getInstance();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         fl = (FrameLayout) findViewById(R.id.seconde);
         FlipNumberS1 = new FlipNumber(this, 0, littlesize);
         FlipNumberS4 = new FlipNumber(this, 0, littlesize);
@@ -175,8 +182,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void init() {
+
         for (int i = 0; i < 4; i++) {
 
             String second, disecond, minute, diminute, hour, dihour;
@@ -247,76 +261,89 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i("passe", "par le init");
-        View cursorRadio = findViewById(R.id.testdisplay);
-        cursorRadio.setOnTouchListener(new View.OnTouchListener() {
-                                           @Override
-                                           public boolean onTouch(View v, MotionEvent event) {
+        final View radioButton = findViewById(R.id.imageView);
 
-                                               int x = (int) event.getRawX();
-                                               Log.i("position", String.valueOf(x));
-                                               int y = (int) event.getY();
-                                               View parent = (View) v.getParent();
-                                               int Border = (x - parent.getWidth()) - v.getWidth();
-                                               switch (event.getAction()) {
-                                                   case MotionEvent.ACTION_DOWN:
-                                                       break;
-                                                   case MotionEvent.ACTION_MOVE:
-                                                       if (setplayerfirstlaunch) {
-                                                           AssetManager assetManager = getAssets();
-                                                           AssetFileDescriptor descriptor = null;
-                                                           try {
-                                                               descriptor = assetManager.openFd("audio/RadioTune.mp3");
-                                                               mplayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
-                                                               mplayer.prepare();
-                                                               mplayer.start();
-                                                               mplayer.setLooping(true);
-                                                               setplayerfirstlaunch = false;
-                                                           } catch (IOException e1) {
-                                                               // TODO Auto-generated catch block
-                                                               e1.printStackTrace();
-                                                           }
+        radioButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final float xc = radioButton.getWidth() / 2;
+                final float yc = radioButton.getHeight() / 2;
+                final float x = event.getX();
+                final float y = event.getY();
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        radioButton.clearAnimation();
+                        mCurrAngle = Math.toDegrees(Math.atan2(x - xc, yc - y));
+                        break;
+                    }
+                    case MotionEvent.ACTION_MOVE: {
+                        if (setplayerfirstlaunch) {
+                            AssetManager assetManager = getAssets();
+                            AssetFileDescriptor descriptor = null;
+                            try {
+                                descriptor = assetManager.openFd("audio/RadioTune.mp3");
+                                mplayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
+                                mplayer.prepare();
+                                mplayer.start();
+                                mplayer.setLooping(true);
+                                setplayerfirstlaunch = false;
+                            } catch (IOException e1) {
+                                // TODO Auto-generated catch block
+                                e1.printStackTrace();
+                            }
+                        }
+                        mPrevAngle = mCurrAngle;
+                        mCurrAngle = Math.toDegrees(Math.atan2(x - xc, yc - y));
+                        animate(mPrevAngle, mCurrAngle, 0);
+                        rotationCycle += (mCurrAngle >= 0 && mCurrAngle <= 180) ? (Math.abs(mCurrAngle) - Math.abs(mPrevAngle)) / 360 : (Math.abs(mPrevAngle) - Math.abs(mCurrAngle)) / 360;
+                        if ((mPrevAngle - mCurrAngle) > 0) {
+                            Log.i("sens1", "onTouch: aiguille d une montre :" + rotationCycle);
+                        } else {
+                            Log.i("sens1", "onTouch: contraire aiguille d une montre :" + rotationCycle);
+                        }
+                        if ((rotationCycle > 1) && (rotationCycle < 2) && !(playeraudio.getRessourcePlaying().equals("http://stream.ouifm.fr/ouifm-high.mp3"))) {
+                            try {
+                                imageShowRadio.changeRadioLogo("ouifm2014logo");
+                                playeraudio.setRadio(getApplicationContext(), "http://stream.ouifm.fr/ouifm-high.mp3");
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
 
-                                                       }
-                                                       if ((x > 100) && (x < 150) && setplayerfirstlaunch2) {
-                                                           new ImageShowRadio(getApplicationContext(), (FrameLayout) findViewById(R.id.messageWarning), "ouifm2014logo");
-                                                           setplayerfirstlaunch2 = false;
-                                                           try {
-                                                               PlayerAudio.getInstance(getApplicationContext(), "http://stream.ouifm.fr/ouifm-high.mp3");
-                                                           } catch (IOException e) {
-                                                               e.printStackTrace();
-                                                           }
+                        } else if ((rotationCycle > 2) && (rotationCycle < 3) && !(playeraudio.getRessourcePlaying().equals("http://mp3lg3.scdn.arkena.com/10489/europe1.mp3"))) {
+                            try {
+                                imageShowRadio.changeRadioLogo("rmclogo");
+                                playeraudio.setRadio(getApplicationContext(), "http://mp3lg3.scdn.arkena.com/10489/europe1.mp3");
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            PlayerAudio.stopPlaying();
+                        }
+                        break;
+                    }
 
-                                                       } else if ((x > 190) && (x < 250) && setplayerfirstlaunch2) {
-                                                           new ImageShowRadio(getApplicationContext(), (FrameLayout) findViewById(R.id.messageWarning), "rmclogo");
-                                                           setplayerfirstlaunch2 = false;
-                                                           try {
-                                                               PlayerAudio.getInstance(getApplicationContext(), "http://mp3lg3.scdn.arkena.com/10489/europe1.mp3");
-                                                           } catch (IOException e) {
-                                                               e.printStackTrace();
-                                                           }
-                                                       } else {
-                                                           setplayerfirstlaunch2 = true;
-                                                       }
-                                                       FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(v.getLayoutParams());
-                                                       lp.setMargins(x, 0, 0, Border);
+                    case MotionEvent.ACTION_UP: {
+                        mPrevAngle = mCurrAngle = 0;
+                        if (mplayer.isPlaying()) mplayer.stop();
+                        mplayer.reset();
+                        setplayerfirstlaunch = true;
+                        break;
+                    }
+                }
+                return true;
+            }
 
-                                                       lp.setMarginStart(x);
-                                                       v.setLayoutParams(lp);
-                                                       break;
-                                                   case MotionEvent.ACTION_UP:
-                                                       mplayer.stop();
-                                                       mplayer.reset();
-                                                       setplayerfirstlaunch = true;
-                                                       break;
+            private void animate(double fromDegrees, double toDegrees, long durationMillis) {
+                final RotateAnimation rotate = new RotateAnimation((float) fromDegrees, (float) toDegrees,
+                        RotateAnimation.RELATIVE_TO_SELF, 0.5f,
+                        RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+                rotate.setDuration(durationMillis);
+                rotate.setFillEnabled(true);
+                rotate.setFillAfter(true);
+                radioButton.startAnimation(rotate);
+            }
+        });
 
-                                               }
-
-                                               return true;
-                                           }
-
-                                       }
-        );
         String second, disecond, minute, diminute, hour, dihour;
         Integer secondint = new Date().getSeconds();
         Integer minuteint = new Date().getMinutes();
@@ -452,11 +479,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
+        launchTimer(this.handler);
+    }
 
+    private void launchTimer(Handler handler) {
         Messenger messager = new Messenger(handler);
         Intent intent = new Intent(this, ThreadServiceTimer.class);
         intent.putExtra("messager", messager);
         start = startService(intent) != null;
+
     }
 
 

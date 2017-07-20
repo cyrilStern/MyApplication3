@@ -31,32 +31,30 @@ public class RadioDAO implements IDAO<Radio, Long>, DAOConstant {
     public RadioDAO(Context context) {
         this.context = context;
         this.dbHelper = new RadioHelper(context);
+
     }
 
     @Override
     public void open() throws SQLException {
+        Log.i("isopen", "yes it open");
         db = dbHelper.getWritableDatabase();
-
     }
 
     @Override
     public void close() {
-        Log.i("message", "sqlclose");
         dbHelper.close();
+        db.close();
     }
 
     @Override
     public void create(Radio radio) throws Exception {
-        if (!testRadio(radio)) {
-            this.open();
+        if (!testRadio(radio, this.db)) {
             ContentValues values = new ContentValues();
             values.put(NOM_COLONNE_CHANNEL, radio.getChannel());
             values.put(NOM_COLONNE_NOM, radio.getName());
             values.put(NOM_COLONNE_URL, radio.getUrl());
-            Log.i(TAG, "create: " + radio.getName() + radio.getUrl() + radio.getChannel());
+            Log.i("insidecreate", "create: " + radio.getName() + radio.getUrl() + radio.getChannel());
             db.insert(TABLE_RADIO, null, values);
-            db.close();
-            this.close();
         }
     }
 
@@ -112,8 +110,7 @@ public class RadioDAO implements IDAO<Radio, Long>, DAOConstant {
         this.dbHelper.onUpgrade(db, 1, 2);
     }
 
-    private boolean testRadio(Radio radio) {
-        SQLiteDatabase sqldb = new RadioHelper(context).getWritableDatabase();
+    private boolean testRadio(Radio radio, SQLiteDatabase sqldb) {
         String Query = "Select * from " + DAOConstant.TABLE_RADIO + " where " + DAOConstant.NOM_COLONNE_NOM + " = '" + radio.getName() + "'";
         Cursor cursor = sqldb.rawQuery(Query, null);
         if (cursor.getCount() <= 0) {

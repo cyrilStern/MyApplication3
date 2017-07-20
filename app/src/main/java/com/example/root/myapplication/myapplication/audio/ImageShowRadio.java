@@ -38,8 +38,8 @@ public class ImageShowRadio extends ImageView implements Runnable {
         super(context);
         this.cont = context;
         this.nameRelativeLayout = fl;
-        this.setBackgroundResource(android.R.color.holo_green_dark);
         nameRelativeLayout.addView(this);
+        this.setImageResource(getResources().getIdentifier(imagePAth, "drawable", cont.getPackageName()));
 
     }
 

@@ -30,24 +30,6 @@ public class ListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        List<String> Listurl = new ArrayList<String>();
-        RadioDAO radioDAO = new RadioDAO(this);
-        try {
-            radioDAO.open();
-            Listurl = radioDAO.findAllUrl();
-            radioDAO.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        ArrayAdapter<String> aAdapteurlistRadio = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, Listurl);
-        ls.setAdapter(aAdapteurlistRadio);
-        ls.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                setResult(position);
-                finish();
-            }
-        });
     }
 }

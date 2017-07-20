@@ -54,11 +54,11 @@ public class ConnexionThreadRadio extends IntentService {
             public void run() {
                 URL url;
                 Message myMessage;
+                Log.i("testest", "zaerty");
                 //myMessage = handler.obtainMessage();
                 HttpURLConnection urlConnection = null;
                 try {
                     url = new URL("http://192.168.1.10:3000/radio");
-
                     urlConnection = (HttpURLConnection) url.openConnection();
                     if (urlConnection.getResponseMessage().toString().equals("OK")) {
                         urlConnection = (HttpURLConnection) url.openConnection();

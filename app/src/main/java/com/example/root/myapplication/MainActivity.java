@@ -43,6 +43,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.example.root.myapplication.DAO.Radio;
+import com.example.root.myapplication.DAO.RadioDAO;
 import com.example.root.myapplication.connexion.ConnectionWebserviceApi;
 import com.example.root.myapplication.myapplication.audio.ImageShowRadio;
 import com.example.root.myapplication.myapplication.audio.PlayerAudio;
@@ -58,6 +60,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -93,8 +96,11 @@ public class MainActivity extends AppCompatActivity {
     private double mPrevAngle = 0;
     private float rotationCycle = 0;
     private ImageShowRadio imageShowRadio;
+    private ImageView imageshow;
     private FrameLayout logoFrameLayout;
     private PlayerAudio playeraudio;
+    private RadioDAO radioDAO;
+    private List<Radio> radioliste;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -102,10 +108,12 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_main);
+
         logoFrameLayout = (FrameLayout) findViewById(R.id.messageWarning);
         imageShowRadio = ImageShowRadio.getInstance(this, logoFrameLayout);
+        imageshow = new ImageView(getApplicationContext());
         btalrm = (Button) findViewById(R.id.alarmButton);
         savediseconde = START_STRING;
         savediminute = START_STRING;
@@ -247,11 +255,24 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setClass(getApplicationContext(), ConnectionWebserviceApi.class);
-                Toast.makeText(getApplicationContext(), START_STRING, Toast.LENGTH_LONG).show();
+                Log.i("call instance", "2");
                 startService(intent);
-//                Intent intent2 = new Intent();
-//                intent2.setClass(getApplicationContext(), ListActivity.class);
-//                startActivity(intent2);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // radioDAO = new RadioDAO(getApplicationContext());
+                        try {
+                            // radioDAO.open();
+                            // radioliste = radioDAO.findAll();
+                            // radioDAO.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            //radioDAO.close();
+
+                        }
+                    }
+                }).start();
+
             }
         });
         mplayer = new MediaPlayer();
@@ -261,6 +282,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+
         final View radioButton = findViewById(R.id.imageView);
 
         radioButton.setOnTouchListener(new View.OnTouchListener() {
@@ -297,29 +320,31 @@ public class MainActivity extends AppCompatActivity {
                         animate(mPrevAngle, mCurrAngle, 0);
                         rotationCycle += (mCurrAngle >= 0 && mCurrAngle <= 180) ? (Math.abs(mCurrAngle) - Math.abs(mPrevAngle)) / 360 : (Math.abs(mPrevAngle) - Math.abs(mCurrAngle)) / 360;
                         if ((mPrevAngle - mCurrAngle) > 0) {
-                            Log.i("sens1", "onTouch: aiguille d une montre :" + rotationCycle);
                         } else {
-                            Log.i("sens1", "onTouch: contraire aiguille d une montre :" + rotationCycle);
                         }
-                        if ((rotationCycle > 1) && (rotationCycle < 2) && !(playeraudio.getRessourcePlaying().equals("http://stream.ouifm.fr/ouifm-high.mp3"))) {
-                            try {
-                                imageShowRadio.changeRadioLogo("ouifm2014logo");
-                                playeraudio.setRadio(getApplicationContext(), "http://stream.ouifm.fr/ouifm-high.mp3");
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                        if (radioliste instanceof List) {
+                            for (Radio radio : radioliste) {
+                                Log.i("rotation", String.valueOf(rotationCycle));
+                                if ((rotationCycle >= Float.valueOf(radio.getChannel())) && (rotationCycle <= Float.valueOf(radio.getChannel()) + 0.25f)
+                                        && !(playeraudio.getRessourcePlaying().equals(radio.getUrl()))) {
+                                    try {
+                                        logoFrameLayout.removeAllViews();
+                                        imageshow.setImageResource(getResources().getIdentifier("ouifm2014logo", "drawable", getApplicationContext().getPackageName()));
+
+                                        logoFrameLayout.addView(imageshow);
+                                        playeraudio.setRadio(getApplicationContext(), radio.getUrl());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                } else {
+                                    PlayerAudio.stopPlaying();
+                                }
+                                break;
+
                             }
 
-                        } else if ((rotationCycle > 2) && (rotationCycle < 3) && !(playeraudio.getRessourcePlaying().equals("http://mp3lg3.scdn.arkena.com/10489/europe1.mp3"))) {
-                            try {
-                                imageShowRadio.changeRadioLogo("rmclogo");
-                                playeraudio.setRadio(getApplicationContext(), "http://mp3lg3.scdn.arkena.com/10489/europe1.mp3");
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            PlayerAudio.stopPlaying();
                         }
-                        break;
                     }
 
                     case MotionEvent.ACTION_UP: {

@@ -1,11 +1,14 @@
 package com.example.root.myapplication.connexion;
 
+import android.app.IntentService;
 import android.app.Service;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.example.root.myapplication.DAO.GenearateCounter;
 import com.example.root.myapplication.DAO.Radio;
 import com.example.root.myapplication.DAO.RadioDAO;
 import com.example.root.myapplication.myapplication.connexion.*;
@@ -27,21 +30,31 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
 
-public class ConnectionWebserviceApi extends Service implements com.example.root.myapplication.myapplication.connexion.ConnctionInterface {
+public class ConnectionWebserviceApi extends IntentService implements com.example.root.myapplication.myapplication.connexion.ConnctionInterface {
     protected ArrayList<Radio> radioListes;
-
+    protected GenearateCounter gC;
+    private int counter = 1;
+    private RadioDAO radioDAO;
     public ConnectionWebserviceApi() {
-        radioListes = new ArrayList<>();
+        super("ConnectionWebserviceApi");
+        this.radioListes = new ArrayList<>();
+
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    protected void onHandleIntent(@Nullable Intent intent) {
+
     }
 
     private String readStream(InputStream in, Boolean activJsonDecode) throws IOException {
@@ -68,6 +81,8 @@ public class ConnectionWebserviceApi extends Service implements com.example.root
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        radioDAO = new RadioDAO(this);
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -102,18 +117,21 @@ public class ConnectionWebserviceApi extends Service implements com.example.root
                     os.close();
                     in = new BufferedInputStream(httpURLConnection.getInputStream());
                     String liste = readStream(in, false);
+                    Log.i("showmessage", "run: radiodao " + counter);
+                    counter++;
+                    radioDAO.open();
                     try {
                         JSONArray array = new JSONArray(liste);
                         for (int i = 0; i < array.length(); i++) {
                             JSONObject radio = array.getJSONObject(i);
-                            RadioDAO radioDAO = new RadioDAO(getApplicationContext());
-                            radioDAO.create(new Radio(radio.getString("id"), radio.getString("name"), radio.getString("path"), String.valueOf(Math.round(Math.random() * 1000))));
-                            radioDAO.close();
+                            radioDAO.create(new Radio(radio.getString("id"), radio.getString("name"), radio.getString("path"), String.valueOf(GenearateCounter.counter())));
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
+                    } finally {
+                        radioDAO.close();
                     }
                     Log.i(TAG, "run: " + liste);
                     httpURLConnection.disconnect();
@@ -121,6 +139,8 @@ public class ConnectionWebserviceApi extends Service implements com.example.root
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (SQLException e) {
                     e.printStackTrace();
                 }
 

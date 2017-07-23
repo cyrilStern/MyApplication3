@@ -4,7 +4,11 @@ import android.app.IntentService;
 import android.app.Service;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -25,6 +29,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -32,11 +37,12 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.content.ContentValues.TAG;
 
 public class ConnectionWebserviceApi extends IntentService implements com.example.root.myapplication.myapplication.connexion.ConnctionInterface {
-    protected ArrayList<Radio> radioListes;
+    protected List<Radio> radioListes;
     protected GenearateCounter gC;
     private int counter = 1;
     private RadioDAO radioDAO;
@@ -80,7 +86,7 @@ public class ConnectionWebserviceApi extends IntentService implements com.exampl
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public int onStartCommand(final Intent intent, int flags, int startId) {
         radioDAO = new RadioDAO(this);
 
         new Thread(new Runnable() {
@@ -126,12 +132,25 @@ public class ConnectionWebserviceApi extends IntentService implements com.exampl
                             JSONObject radio = array.getJSONObject(i);
                             radioDAO.create(new Radio(radio.getString("id"), radio.getString("name"), radio.getString("path"), String.valueOf(GenearateCounter.counter())));
                         }
+                        radioListes = radioDAO.findAll();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
                     } finally {
                         radioDAO.close();
+                        Bundle bundle = intent.getExtras();
+                        Messenger messenger = (Messenger) bundle.get("messager");
+                        Message message = Message.obtain();
+                        Bundle bdl = new Bundle();
+                        bdl.putSerializable("listeRadio", (Serializable) radioListes);
+                        Log.i("message", "messagetouithread");
+                        message.setData(bdl);
+                        try {
+                            messenger.send(message);
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
                     }
                     Log.i(TAG, "run: " + liste);
                     httpURLConnection.disconnect();

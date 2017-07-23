@@ -1,72 +1,39 @@
 package com.example.root.myapplication;
 
-import android.animation.ValueAnimator;
-import android.app.DialogFragment;
-import android.app.IntentService;
-import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.media.AudioManager;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
-import android.os.SystemClock;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.root.myapplication.DAO.Radio;
-import com.example.root.myapplication.DAO.RadioDAO;
 import com.example.root.myapplication.connexion.ConnectionWebserviceApi;
 import com.example.root.myapplication.myapplication.audio.ImageShowRadio;
 import com.example.root.myapplication.myapplication.audio.PlayerAudio;
 
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.zip.Inflater;
-
-import static com.example.root.myapplication.connexion.ConnctionInterface.URLPATH;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -74,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private final int bigsize = 10;
     private final int littlesize = 1;
     public Bitmap mybitmap, newbmp, bitmap, bmp;
-    private Handler handler;
+    private Handler handler, handler2;
     private FrameLayout fl, fl1, fl2, fl3, fl4, fl5;
     private ImageView iw, iw1, iw2, iw3, iw4, iw5;
     private Boolean start, setplayerfirstlaunch, setplayerfirstlaunch2;
@@ -96,11 +63,11 @@ public class MainActivity extends AppCompatActivity {
     private double mPrevAngle = 0;
     private float rotationCycle = 0;
     private ImageShowRadio imageShowRadio;
-    private ImageView imageshow;
     private FrameLayout logoFrameLayout;
     private PlayerAudio playeraudio;
-    private RadioDAO radioDAO;
-    private List<Radio> radioliste;
+    private Messenger message;
+    private List<Radio> listeRadio;
+    private TextView textView;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -108,12 +75,35 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        // this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_main);
 
+
+        //start service to get radio.
+        handler2 = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message msg) {
+                Bundle bdl = msg.getData();
+                if (bdl.get("listeRadio") != "") {
+                    listeRadio = (List<Radio>) bdl.getSerializable("listeRadio");
+                }
+                return false;
+            }
+        });
+        message = new Messenger(handler2);
+        Intent intent = new Intent();
+        intent.setClass(getApplicationContext(), ConnectionWebserviceApi.class);
+        intent.putExtra("messager", message);
+        Toast.makeText(getApplicationContext(), START_STRING, Toast.LENGTH_LONG).show();
+        startService(intent);
+        // end start service
+
+
+        textView = (TextView) findViewById(R.id.textnameradio);
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/SFDigitalReadout-Medium.ttf");
+        textView.setTypeface(typeface);
         logoFrameLayout = (FrameLayout) findViewById(R.id.messageWarning);
         imageShowRadio = ImageShowRadio.getInstance(this, logoFrameLayout);
-        imageshow = new ImageView(getApplicationContext());
         btalrm = (Button) findViewById(R.id.alarmButton);
         savediseconde = START_STRING;
         savediminute = START_STRING;
@@ -127,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        //instanciation de l'horloge
         fl = (FrameLayout) findViewById(R.id.seconde);
         FlipNumberS1 = new FlipNumber(this, 0, littlesize);
         FlipNumberS4 = new FlipNumber(this, 0, littlesize);
@@ -185,6 +177,8 @@ public class MainActivity extends AppCompatActivity {
         fl5.addView(FlipNumberHD2);
         fl5.addView(FlipNumberHD3);
         fl5.addView(FlipNumberHD4);
+        // fin d instanciation
+
         init();
 
 
@@ -194,6 +188,34 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
+    }
+
+    @Override
+    protected void onStop() {
+        this.fl.removeAllViews();
+        this.fl1.removeAllViews();
+        this.fl2.removeAllViews();
+        this.fl3.removeAllViews();
+        this.fl4.removeAllViews();
+        this.fl5.removeAllViews();
+        super.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        this.fl.removeAllViews();
+        this.fl1.removeAllViews();
+        this.fl2.removeAllViews();
+        this.fl3.removeAllViews();
+        this.fl4.removeAllViews();
+        this.fl5.removeAllViews();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -253,26 +275,10 @@ public class MainActivity extends AppCompatActivity {
         btalrm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setClass(getApplicationContext(), ConnectionWebserviceApi.class);
-                Log.i("call instance", "2");
-                startService(intent);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // radioDAO = new RadioDAO(getApplicationContext());
-                        try {
-                            // radioDAO.open();
-                            // radioliste = radioDAO.findAll();
-                            // radioDAO.close();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            //radioDAO.close();
 
-                        }
-                    }
-                }).start();
-
+//                Intent intent2 = new Intent();
+//                intent2.setClass(getApplicationContext(), ListActivity.class);
+//                startActivity(intent2);
             }
         });
         mplayer = new MediaPlayer();
@@ -282,10 +288,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-
         final View radioButton = findViewById(R.id.imageView);
-
         radioButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -320,31 +323,28 @@ public class MainActivity extends AppCompatActivity {
                         animate(mPrevAngle, mCurrAngle, 0);
                         rotationCycle += (mCurrAngle >= 0 && mCurrAngle <= 180) ? (Math.abs(mCurrAngle) - Math.abs(mPrevAngle)) / 360 : (Math.abs(mPrevAngle) - Math.abs(mCurrAngle)) / 360;
                         if ((mPrevAngle - mCurrAngle) > 0) {
+                            //  Log.i("sens1", "onTouch: aiguille d une montre :" + rotationCycle);
                         } else {
+                            // Log.i("sens1", "onTouch: contraire aiguille d une montre :" + rotationCycle);
                         }
-                        if (radioliste instanceof List) {
-                            for (Radio radio : radioliste) {
-                                Log.i("rotation", String.valueOf(rotationCycle));
-                                if ((rotationCycle >= Float.valueOf(radio.getChannel())) && (rotationCycle <= Float.valueOf(radio.getChannel()) + 0.25f)
-                                        && !(playeraudio.getRessourcePlaying().equals(radio.getUrl()))) {
-                                    try {
-                                        logoFrameLayout.removeAllViews();
-                                        imageshow.setImageResource(getResources().getIdentifier("ouifm2014logo", "drawable", getApplicationContext().getPackageName()));
 
-                                        logoFrameLayout.addView(imageshow);
-                                        playeraudio.setRadio(getApplicationContext(), radio.getUrl());
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                } else {
-                                    PlayerAudio.stopPlaying();
+                        for (Radio radio : listeRadio
+                                ) {
+                            if ((rotationCycle > Float.parseFloat(radio.getChannel())) && (rotationCycle < Float.parseFloat(radio.getChannel()) + 0.15f) && !(playeraudio.getRessourcePlaying().equals("http://stream.ouifm.fr/ouifm-high.mp3"))) {
+                                try {
+                                    textView.setText(radio.getName());
+                                    //   imageShowRadio.changeRadioLogo(radio.getName() + ".png");
+                                    playeraudio.setRadio(getApplicationContext(), radio.getUrl());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
-                                break;
 
+                            } else {
+                                PlayerAudio.stopPlaying();
                             }
-
                         }
+
+                        break;
                     }
 
                     case MotionEvent.ACTION_UP: {
